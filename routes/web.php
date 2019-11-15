@@ -23,3 +23,11 @@ Route::get('/in_development', function () {
 Route::get('/no_access', function () {
     return view('no_access');
 })->name('NO_ACCESS');
+
+/* general functions */
+
+Route::get('/loader', function (){
+    return view('loader');
+})->name('loader');
+
+Route::post('/files/load', 'FileController@load')->name('files.load');

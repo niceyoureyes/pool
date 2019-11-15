@@ -27,7 +27,7 @@
 						<a class="nav-link" href="{{ route('IN_DEVELOPMENT') }}">Упражнения подробно</a>
 					</li>
                     <li class="nav-item ml-3">
-						<a class="nav-link" href="{{ route('IN_DEVELOPMENT') }}">Загрузить</a>
+						<a class="nav-link" href="{{ route('loader') }}">Загрузить</a>
 					</li>
 					<li class="nav-item mr-3">
 						<a class="nav-link" href="{{ route('IN_DEVELOPMENT') }}">Загруженные файлы<span class="sr-only">(current)</span></a>
