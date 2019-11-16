@@ -9,7 +9,7 @@
                 <h3 clss="text-center">Загружены файлы ({{ filesFinish.length }})</h3>
                 <ul class="list-group">
                     <li class="list-group-item" v-for="file in filesFinish" v-bind:key="file.id">
-                        {{ file.name }} : {{ file.type }}
+                        {{ file.name }} : {{ file.type }} : {{ file.id }}
                     </li>
                 </ul>
             </div>
@@ -21,16 +21,7 @@
 export default {
     data(){
         return{
-            filesOrder: [
-                {name: 'file1', type: 'txt', id: 1},
-                {name: 'file2', type: 'txt', id: 2},
-                {name: 'file3', type: 'png', id: 3}
-            ],
-            filesFinish: [
-                {name: 'file1', type: 'txt', id: 1},
-                {name: 'file2', type: 'txt', id: 2},
-                {name: 'file3', type: 'png', id: 3}
-            ]
+            filesFinish: []
         }
     },
     methods:{
@@ -44,10 +35,13 @@ export default {
         async UploadFile(item){
             let form = new FormData();
             form.append('file', item);
+            form.append('name', item.name);
 
             await axios.post('files/load', form)
             .then(response => {
+                item.id = this.filesFinish.length;
                 this.filesFinish.push(item);
+                console.log(response);
             })
             .catch(error => {
                 console.log(error);

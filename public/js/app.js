@@ -1897,32 +1897,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      filesOrder: [{
-        name: 'file1',
-        type: 'txt',
-        id: 1
-      }, {
-        name: 'file2',
-        type: 'txt',
-        id: 2
-      }, {
-        name: 'file3',
-        type: 'png',
-        id: 3
-      }],
-      filesFinish: [{
-        name: 'file1',
-        type: 'txt',
-        id: 1
-      }, {
-        name: 'file2',
-        type: 'txt',
-        id: 2
-      }, {
-        name: 'file3',
-        type: 'png',
-        id: 3
-      }]
+      filesFinish: []
     };
   },
   methods: {
@@ -1968,14 +1943,19 @@ __webpack_require__.r(__webpack_exports__);
             case 0:
               form = new FormData();
               form.append('file', item);
-              _context2.next = 4;
+              form.append('name', item.name);
+              _context2.next = 5;
               return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('files/load', form).then(function (response) {
+                item.id = _this.filesFinish.length;
+
                 _this.filesFinish.push(item);
+
+                console.log(response);
               })["catch"](function (error) {
                 console.log(error);
               }));
 
-            case 4:
+            case 5:
             case "end":
               return _context2.stop();
           }
@@ -38073,6 +38053,8 @@ var render = function() {
                   _vm._s(file.name) +
                   " : " +
                   _vm._s(file.type) +
+                  " : " +
+                  _vm._s(file.id) +
                   "\n                "
               )
             ])
