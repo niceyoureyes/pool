@@ -25,9 +25,17 @@ Route::get('/no_access', function () {
 })->name('NO_ACCESS');
 
 /* general functions */
+//TODO middleware admin everywhere
 
-Route::get('/loader', function (){
-    return view('loader');
-})->name('loader');
+Route::prefix('files')->group(function(){
+    Route::get( 'load'   , function (){ return view('loader'); })->name('loader');
+    Route::post('load'   , 'FileController@load')->name('load');
+    Route::get( 'resolve', 'FileController@resolve')->name('resolve');
+    Route::get( '/'      , 'FileController@get')->name('files');
+});
 
-Route::post('/files/load', 'FileController@load')->name('files.load');
+Route::prefix('exercise')->group(function(){
+    Route::get( '/verbose', function(){ return view('in_development'); })->name('exercise_by_id');
+    Route::get( '/'       , 'ExerciseController@get')->name('exercises');
+    Route::get( '{id}'    , 'ExerciseController@get')->where(['id' => '[0-9]+'])->name('get_exercise_by_id');
+});

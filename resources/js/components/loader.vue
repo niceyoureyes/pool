@@ -1,12 +1,16 @@
 <template>
     <div class="container">
-        <input type="file" name="files" multiple="" @change="fileInputChange">
-
-        <hr>
-
+        <div class="row">
+            <div class="col-6">
+                <h3 class="text-center">Загружены файлы ({{ filesFinish.length }})</h3>
+            </div>
+            <div class="col-6">
+                <input type="file" class="btn btn-dark" name="files" multiple="" @change="fileInputChange">
+            </div>
+        </div>
+        <br>
         <div class="row justify-content-center">
-            <div class="col-6 ">
-                <h3 clss="text-center">Загружены файлы ({{ filesFinish.length }})</h3>
+            <div class="col-10">
                 <ul class="list-group">
                     <li class="list-group-item" v-for="file in filesFinish" v-bind:key="file.id">
                         {{ file.name }} : {{ file.type }} : {{ file.id }}
@@ -37,7 +41,7 @@ export default {
             form.append('file', item);
             form.append('name', item.name);
 
-            await axios.post('files/load', form)
+            await axios.post('load', form)
             .then(response => {
                 item.id = this.filesFinish.length;
                 this.filesFinish.push(item);

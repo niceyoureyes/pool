@@ -7,7 +7,7 @@
 
         <title>Pool 1.0</title>
 
-		<link href="css/app.css" rel="stylesheet">
+		<link href="{{ asset( 'css/app.css' ) }}" rel="stylesheet">
 		@yield('head')
     </head>
 	
@@ -20,42 +20,40 @@
 
 			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
-						<a class="nav-link" href="{{ route('IN_DEVELOPMENT') }}">Упражнения</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{ route('IN_DEVELOPMENT') }}">Упражнения подробно</a>
-					</li>
-                    <li class="nav-item ml-3">
-						<a class="nav-link" href="{{ route('loader') }}">Загрузить</a>
-					</li>
-					<li class="nav-item mr-3">
-						<a class="nav-link" href="{{ route('IN_DEVELOPMENT') }}">Загруженные файлы<span class="sr-only">(current)</span></a>
-					</li>
-
+                    
                     <!-- Authentication Links -->
                     @guest
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                         </li>
-                        @if (Route::has('register'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                            </li>
-                        @endif
+                    @if (Route::has('register'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                        </li>
+                    @endif
                     @else
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ route('exercises') }}">Упражнения</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('exercise_by_id') }}">Упражнения подробно</a>
+                        </li>
+                        <li class="nav-item ml-3">
+                            <a class="nav-link" href="{{ route('loader') }}">Загрузить</a>
+                        </li>
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="{{ route('files') }}">Загруженные файлы<span class="sr-only">(current)</span></a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 {{ Auth::user()->name }} <span class="caret"></span>
                             </a>
-
+                            
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault();
-                                                 document.getElementById('logout-form').submit();">
+                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     {{ __('Logout') }}
                                 </a>
-
+                                    
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     @csrf
                                 </form>

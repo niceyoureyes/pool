@@ -50,24 +50,38 @@ class FileController extends Controller
                 $bulk->type = $raws[0];
                 $bulk->line = $raws[1];
                 $bulk->save();
-                FileController::resolveExercise($bulk);
             }
         }
 
         return;
     }
 
+    public function get(Request $request)
+    {
+        $files = File::all();
+        $files = $files->map(function($file){
+            $file->stor_name = substr($file->stor_name, 0, 20);
+            unset($file->id);
+            return $file;
+        });
+        return view('files', compact('files') );
+    }
+
     public function resolve(Request $request)
     {
+        Log::info('***** FileController ***** resolving files *****');
+        Exercise::query()->delete();
         $bulks = Bulk::all();
 
-        foreach($bulk as $bulks)
+        foreach($bulks as $bulk)
         {
             if($bulk->type == "com.samsung.health.exercise")
             {
-                resolveExercise($bulk);
+                $this->resolveExercise($bulk);
             }
         }
+        Log::info('***** FileController ***** end resolving files *****');
+        return redirect()->route('exercises');
     }
 
     // ***** resolving handlers *****

@@ -16,60 +16,71 @@
 CREATE DATABASE IF NOT EXISTS `pool` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `pool`;
 
--- Дамп структуры для таблица pool.blob_my_livedata
-CREATE TABLE IF NOT EXISTS `blob_my_livedata` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `exercise` int(11) DEFAULT NULL,
-  `duration` int(11) DEFAULT NULL,
-  `start_time` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_blob_my_livedata_exercise_my` (`exercise`),
-  CONSTRAINT `FK_blob_my_livedata_exercise_my` FOREIGN KEY (`exercise`) REFERENCES `exercise_my` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Дамп данных таблицы pool.blob_my_livedata: ~0 rows (приблизительно)
-/*!40000 ALTER TABLE `blob_my_livedata` DISABLE KEYS */;
-/*!40000 ALTER TABLE `blob_my_livedata` ENABLE KEYS */;
-
 -- Дамп структуры для таблица pool.bulks
 CREATE TABLE IF NOT EXISTS `bulks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `filename` varchar(100) NOT NULL,
-  `typeline` varchar(300) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `file_id` int(11) NOT NULL,
+  `type` varchar(300) NOT NULL,
+  `line` varchar(1000) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_bulks_files` (`file_id`),
+  CONSTRAINT `FK_bulks_files` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы pool.bulks: ~0 rows (приблизительно)
+-- Дамп данных таблицы pool.bulks: ~1 rows (приблизительно)
 /*!40000 ALTER TABLE `bulks` DISABLE KEYS */;
+INSERT INTO `bulks` (`id`, `file_id`, `type`, `line`) VALUES
+	(33, 84, 'com.samsung.health.exercise', 'time_offset,end_time,altitude_loss,max_altitude,start_time,count,altitude_gain,exercise_custom_type,duration,deviceuuid,max_heart_rate,max_rpm,mean_heart_rate,pkg_name,max_cadence,mean_caloricburn_rate,incline_distance,exercise_type,decline_distance,max_speed,mean_power,max_power,mean_rpm,calorie,mean_cadence,mean_speed,update_time,min_altitude,min_heart_rate,live_data,count_type,max_caloricburn_rate,custom,comment,additional,distance,location_data,datauuid,create_time');
 /*!40000 ALTER TABLE `bulks` ENABLE KEYS */;
 
--- Дамп структуры для таблица pool.exercise_my
-CREATE TABLE IF NOT EXISTS `exercise_my` (
+-- Дамп структуры для таблица pool.exercises
+CREATE TABLE IF NOT EXISTS `exercises` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `bulk_id` int(11) DEFAULT NULL,
-  `duration` int(11) DEFAULT NULL,
+  `start_time` datetime DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `distance` float DEFAULT NULL,
+  `mean_speed` float DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_exercise_my_bulk` (`bulk_id`),
   CONSTRAINT `FK_exercise_my_bulk` FOREIGN KEY (`bulk_id`) REFERENCES `bulks` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10141 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы pool.exercise_my: ~0 rows (приблизительно)
-/*!40000 ALTER TABLE `exercise_my` DISABLE KEYS */;
-/*!40000 ALTER TABLE `exercise_my` ENABLE KEYS */;
+-- Дамп данных таблицы pool.exercises: ~8 rows (приблизительно)
+/*!40000 ALTER TABLE `exercises` DISABLE KEYS */;
+INSERT INTO `exercises` (`id`, `bulk_id`, `start_time`, `duration`, `distance`, `mean_speed`) VALUES
+	(10133, 33, '2016-09-18 09:58:00', 960.13, 1464.19, 1.52499),
+	(10134, 33, '2016-09-18 13:45:00', 968.602, 1429.68, 1.47603),
+	(10135, 33, '2016-09-19 07:03:00', 906.382, 1507.98, 1.66374),
+	(10136, 33, '2016-09-19 11:03:00', 946.377, 1139.98, 1.20458),
+	(10137, 33, '2016-09-19 14:43:22', 949.397, 1355.45, 1.42769),
+	(10138, 33, '2016-09-19 18:08:00', 843.428, 1105.41, 1.31061),
+	(10139, 33, '2016-09-21 05:33:00', 686.304, 1250.48, 1.82206),
+	(10140, 33, '2016-09-21 10:58:42', 921.417, 1441.51, 1.56445);
+/*!40000 ALTER TABLE `exercises` ENABLE KEYS */;
 
--- Дамп структуры для таблица pool.exercise_pool
-CREATE TABLE IF NOT EXISTS `exercise_pool` (
+-- Дамп структуры для таблица pool.files
+CREATE TABLE IF NOT EXISTS `files` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `bulk` int(11) DEFAULT NULL,
-  `speed` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_exercise_pool_bulk` (`bulk`),
-  CONSTRAINT `FK_exercise_pool_bulk` FOREIGN KEY (`bulk`) REFERENCES `bulks` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `filename` varchar(250) NOT NULL,
+  `stor_name` varchar(250) NOT NULL,
+  `ext` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы pool.exercise_pool: ~0 rows (приблизительно)
-/*!40000 ALTER TABLE `exercise_pool` DISABLE KEYS */;
-/*!40000 ALTER TABLE `exercise_pool` ENABLE KEYS */;
+-- Дамп данных таблицы pool.files: ~9 rows (приблизительно)
+/*!40000 ALTER TABLE `files` DISABLE KEYS */;
+INSERT INTO `files` (`id`, `filename`, `stor_name`, `ext`) VALUES
+	(84, 'com.samsung.health.exercise.201911101612.csv', 'uploads/JrHICw8HkLHFQRC5K8O8FMYoQf6TxNh3DMfeQvIz.txt', 'txt'),
+	(85, 'live_data.2.blob', 'uploads/Xh2qZTLqCWnY2h9Y4JJz7t6RPrUlwY3gDUqL96rU.gz', 'gz'),
+	(86, 'live_data.3.blob', 'uploads/XtgFLzr4GSt0MRybOG44I1oVNpmCccfKKO291Sca.gz', 'gz'),
+	(87, 'live_data.5.blob', 'uploads/kdTLBUnqKi5I7DDUsLmXlX653czBcCFmw7njWCUK.gz', 'gz'),
+	(88, 'live_data.7.blob', 'uploads/74ntBFPQsnir8JwjVaaDSboOxGVMv3LvLb1AlOgC.gz', 'gz'),
+	(89, 'live_data.9.blob', 'uploads/U73jkSDFdpB1bmQori4Pf6EufUiVDbny0DfThEcy.gz', 'gz'),
+	(90, 'live_data.11.blob', 'uploads/Rda2Oq4YamJwFMwjxZBLmJhz9Hny9fcGMJiF16JE.gz', 'gz'),
+	(91, 'live_data.13.blob', 'uploads/hy0gDA3pfC6OQlPLAmnrpcN8oCWWkts8DIBytCDQ.gz', 'gz'),
+	(92, 'live_data.15.blob', 'uploads/Lo0lGMI7HJMJUnwXzvzSMEE1dBnDQhDI2lHdAjFL.gz', 'gz');
+/*!40000 ALTER TABLE `files` ENABLE KEYS */;
 
 -- Дамп структуры для таблица pool.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -83,10 +94,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы pool.users: ~0 rows (приблизительно)
+-- Дамп данных таблицы pool.users: ~1 rows (приблизительно)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-	(1, 'Alex', 'iliechev2003@gmail.com', '$2y$10$onpqYmGUGsDE/aJlRy4YKugYSMPWJAzTgHQVjsoP7XnYCAVbjOoDy', NULL, '2019-11-14 13:20:46', '2019-11-14 13:20:46');
+	(1, 'Alex', 'iliechev2003@gmail.com', '$2y$10$onpqYmGUGsDE/aJlRy4YKugYSMPWJAzTgHQVjsoP7XnYCAVbjOoDy', 'p2OwCppkWTrfbNSTRcYYKZo4DrykZZxUaA4aTVLU2kHD6leXtPBqCgztex0H', '2019-11-14 13:20:46', '2019-11-14 13:20:46');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
