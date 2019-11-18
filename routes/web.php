@@ -31,11 +31,12 @@ Route::prefix('files')->group(function(){
     Route::get( 'load'   , function (){ return view('loader'); })->name('loader');
     Route::post('load'   , 'FileController@load')->name('load');
     Route::get( 'resolve', 'FileController@resolve')->name('resolve');
+    Route::get( 'clear'  , 'FileController@clear')->name('clear_files');
     Route::get( '/'      , 'FileController@get')->name('files');
 });
 
-Route::prefix('exercise')->group(function(){
+Route::prefix('exercises')->group(function(){
     Route::get( '/verbose', function(){ return view('in_development'); })->name('exercise_by_id');
     Route::get( '/'       , 'ExerciseController@get')->name('exercises');
-    Route::get( '{id}'    , 'ExerciseController@get')->where(['id' => '[0-9]+'])->name('get_exercise_by_id');
+    Route::get( '{id}'    , 'ExerciseController@get_by_id')->where(['id' => '[0-9]+'])->name('get_exercise_by_id');
 });

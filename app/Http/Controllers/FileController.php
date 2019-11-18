@@ -40,6 +40,7 @@ class FileController extends Controller
         {
             $raw = $request->file('file')->get();
             $raws = explode("\n", $raw); // redundant
+            Log::info('count exercises : '.(count($raws) - 2));
 
             if(count($raws) > 1)
             {
@@ -65,6 +66,17 @@ class FileController extends Controller
             return $file;
         });
         return view('files', compact('files') );
+    }
+
+    public function clear(Request $request)
+    {
+        // TODO maybe delete only files
+        Exercise::query()->delete();
+        Bulk::query()->delete();
+        File::query()->delete();
+        Storage::disk('public')->deleteDirectory('uploads');
+
+        return redirect()->route('files');
     }
 
     public function resolve(Request $request)
@@ -109,19 +121,27 @@ class FileController extends Controller
             $duration_sec = $data[$names['duration']] / 1000;
             $start_time   = $data[$names['start_time']];
             $distance     = $data[$names['distance']];
-            $mean_speed  = $data[$names['mean_speed']];
+            $mean_speed   = $data[$names['mean_speed']];
+            $live_data    = $data[$names['live_data']];
             
+            // handle time
             $dt = new DateTime($start_time);
             $dt->modify("-".round($offset_hours)." hour");
             $start_time = $dt->format('Y-m-d H:i:s');
             
+            // handle blob
+            $stor_name_file = File::where('filename', $live_data)->first()->stor_name;
+            $live_data_blob = Storage::disk('public')->get($stor_name_file);
+            
             //TODO change to mass DB saving (very slow)
             $exercise = new Exercise;
+            $exercise->id = $i - 1;
             $exercise->bulk_id = $bulk->id;
             $exercise->start_time = $start_time;
             $exercise->duration = $duration_sec;
             $exercise->distance = $distance;
             $exercise->mean_speed = $mean_speed;
+            $exercise->live_data = $live_data_blob;
             $exercise->save();
         }
     }

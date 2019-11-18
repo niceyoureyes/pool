@@ -41,7 +41,7 @@ export default {
             for(let i = 0; i < this.columns.length; i++)
             {
                 let col = [];
-                col.id = i;
+                col.id = i + 1;
                 col.name = this.columns[i];
                 this.cols.push(col);
             }
@@ -49,7 +49,7 @@ export default {
             for(let i = 0; i < this.raws.length; i++)
             {
                 let row = [];
-                row.id = i;
+                row.id = i + 1;
                 row.data = this.raws[i];
                 this.rows.push(row);
             }

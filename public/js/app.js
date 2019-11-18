@@ -2019,14 +2019,14 @@ __webpack_require__.r(__webpack_exports__);
     update: function update() {
       for (var i = 0; i < this.columns.length; i++) {
         var col = [];
-        col.id = i;
+        col.id = i + 1;
         col.name = this.columns[i];
         this.cols.push(col);
       }
 
       for (var _i = 0; _i < this.raws.length; _i++) {
         var row = [];
-        row.id = _i;
+        row.id = _i + 1;
         row.data = this.raws[_i];
         this.rows.push(row);
       }

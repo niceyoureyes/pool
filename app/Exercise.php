@@ -10,5 +10,9 @@ class Exercise extends Model
         'id', 'bulk_id', 'start_time', 'duration'
     ];
 
+    protected $hidden = [
+        'live_data'
+    ];
+
     public $timestamps = false;
 }

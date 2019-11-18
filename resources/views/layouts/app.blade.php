@@ -32,17 +32,17 @@
                         </li>
                     @endif
                     @else
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{{ route('exercises') }}">Упражнения</a>
+                        <li class="nav-item @if (url()->current() == route('exercises')) active @endif">
+                            <a class="nav-link"             href="{{ route('exercises') }}">Упражнения</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('exercise_by_id') }}">Упражнения подробно</a>
+                        <li class="nav-item @if (url()->current() == route('exercise_by_id')) active @endif">
+                            <a class="nav-link"             href="{{ route('exercise_by_id') }}">Упражнения подробно</a>
                         </li>
-                        <li class="nav-item ml-3">
-                            <a class="nav-link" href="{{ route('loader') }}">Загрузить</a>
+                        <li class="nav-item @if (url()->current() == route('loader')) active @endif ml-3">
+                            <a class="nav-link"             href="{{ route('loader') }}">Загрузить</a>
                         </li>
-                        <li class="nav-item mr-3">
-                            <a class="nav-link" href="{{ route('files') }}">Загруженные файлы<span class="sr-only">(current)</span></a>
+                        <li class="nav-item @if (url()->current() == route('files')) active @endif mr-3">
+                            <a class="nav-link"             href="{{ route('files') }}">Загруженные файлы</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

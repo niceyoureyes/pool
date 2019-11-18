@@ -10,6 +10,7 @@
         </div>
         <div class="col-6">
             <a class="btn btn-dark" href="{{ route('resolve') }}" role="button">Обработать файлы</a>
+            <a class="btn btn-dark" href="{{ route('clear_files') }}" role="button">Удалить все данные</a>
         </div>
     </div>
     <br>
