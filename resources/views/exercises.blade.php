@@ -6,7 +6,7 @@
 @section('content')
     <h3 class="text-center">Упражнения</h3>
     <div id="app">
-        <ttable :columns="['#', 'Старт', 'Длительность (сек)', 'Дистанция (м)', 'Средняя скорость']"
+        <ttable :columns="{{$names}}"
                 :raws="{{$exercises}}">
         </ttable>
     </div>

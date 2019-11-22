@@ -11,10 +11,10 @@
             <tbody>
                 <tr v-for="row in rows" v-bind:key="row.id">
                     <th scope="row">
-                        {{ row.id }}
+                        <i>{{ row.id }}</i>
                     </th>
                     <td v-for="val in row.data" v-bind:key="val">
-                        {{ val }}
+                        <span v-html="val"></span>
                     </td>
                 </tr>
             </tbody>

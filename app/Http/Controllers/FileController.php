@@ -16,7 +16,7 @@ class FileController extends Controller
 {
     public function load(Request $request)
     {
-        Log::info('***** FileController ***** performing loading *****');
+        Log::info("***** FileController ***** BEGIN loading *****");
 
         $path = $request->file('file')->store('uploads', 'public');
         $ext  = $request->file('file')->extension();
@@ -40,10 +40,10 @@ class FileController extends Controller
         {
             $raw = $request->file('file')->get();
             $raws = explode("\n", $raw); // redundant
-            Log::info('count exercises : '.(count($raws) - 2));
-
+            
             if(count($raws) > 1)
             {
+                Log::info('count exercises   : '.(count($raws) - 2));
                 Log::info('length of typeline: '.strlen($raws[1]));
 
                 $bulk = new Bulk;
@@ -54,6 +54,7 @@ class FileController extends Controller
             }
         }
 
+        Log::info("***** FileController ***** END loading *****\n");
         return;
     }
 
@@ -81,7 +82,7 @@ class FileController extends Controller
 
     public function resolve(Request $request)
     {
-        Log::info('***** FileController ***** resolving files *****');
+        Log::info("***** FileController ***** BEGIN resolving files *****");
         Exercise::query()->delete();
         $bulks = Bulk::all();
 
@@ -92,7 +93,7 @@ class FileController extends Controller
                 $this->resolveExercise($bulk);
             }
         }
-        Log::info('***** FileController ***** end resolving files *****');
+        Log::info("***** FileController ***** END resolving files *****\n");
         return redirect()->route('exercises');
     }
 
@@ -100,10 +101,132 @@ class FileController extends Controller
 
     public function resolveExercise(Bulk $bulk)
     {
-        $exercise_names = ['time_offset','end_time','start_time','duration','max_speed','mean_power','max_power','mean_rpm','calorie','mean_speed','live_data','comment','distance'];
-        $bulk_names  = explode(",", $bulk->line);
-        $bulk_count  = count($bulk_names);
-        $names       = array_flip( array_intersect( $bulk_names, $exercise_names ) );
+        $data_from      = ['time_offset', 'start_time', 'end_time' , 'duration',
+                           'max_speed'  , 'mean_speed', 'live_data', 'comment' ,
+                           'distance'   , 'additional' ];
+        
+        $data_to        = [               'start_time', 'end_time' , 'duration',
+                           'max_tempo'  , 'mean_tempo', 'live_data', 'comment' ,
+                           'fists'      , 'scapula'   , 'flippers' ,
+                           'hand_w'     , 'foot_w'    , 'kolobashka',
+                           'length_type', 'distance'  , 'addl_data'];
+
+        $handlers = [
+            'duration'    => function($x, $d){
+                return $x / 1000;
+            },
+
+            'mean_tempo'  => function($x, $d){
+                if( $d['mean_speed'] == 0)
+                    return 0;
+                else
+                    return 100 / $d['mean_speed'];
+            },
+
+            'max_tempo'   => function($x, $d){
+                if( $d['max_speed'] == 0)
+                    return 0;
+                else
+                    return 100 / $d['max_speed'];
+            },
+
+            'start_time'  => function($x, $d){
+                $offset_hours = $d['time_offset'] / 3600 / 1000;
+                $dt = new DateTime($x);
+                $dt->modify("-".round($offset_hours)." hour");
+                return $dt->format('Y-m-d H:i:s');
+            },
+
+            'end_time'    => function($x, $d){
+                $offset_hours = $d['time_offset'] / 3600 / 1000;
+                $dt = new DateTime($x);
+                $dt->modify("-".round($offset_hours)." hour");
+                return $dt->format('Y-m-d H:i:s');
+            },
+
+            'live_data'   => function($x, $d){
+                $data_file = File::where('filename', $x)->first();
+                if ($data_file == null)
+                {
+                    return null;    
+                }
+                else{
+                    $stor_name_file = $data_file->stor_name;
+                    return Storage::disk('public')->get($stor_name_file);
+                }
+            },
+
+            'addl_data'   => function($x, $d){
+                $x = $d['additional'];
+                $data_file = File::where('filename', $x)->first();
+                if ($data_file == null)
+                {
+                    return null;    
+                }
+                else{
+                    $stor_name_file = $data_file->stor_name;
+                    return Storage::disk('public')->get($stor_name_file);
+                }
+            },
+
+            'fists'       => function($x, $d){
+                if(mb_stripos($d['comment'], 'кулаки') === false)
+                    return 0;
+                else
+                    return 1;
+            }, 
+            
+            'scapula'     => function($x, $d){
+                if(mb_stripos($d['comment'], 'лопатки') === false)
+                    return 0;
+                else
+                    return 1;
+            },
+            
+            'flippers'    => function($x, $d){
+                if(mb_stripos($d['comment'], 'ласты') === false)
+                    return 0;
+                else
+                    return 1;
+            },
+
+            'hand_w'      => function($x, $d){
+                if(mb_stripos($d['comment'], 'руки') === false )
+                    return 0;
+                else
+                    return 1;
+            },
+            
+            'foot_w'      => function($x, $d){
+                if(mb_stripos($d['comment'], 'ноги') === false)
+                    return 0;
+                else
+                    return 1;
+            },
+            
+            'kolobashka'  => function($x, $d){
+                if(mb_stripos($d['comment'], 'колобашка') === false)
+                    return 0;
+                else
+                    return 1;
+            }
+        ];
+
+        $db_data = $this->resolveFields($data_from, $data_to, $handlers, $bulk);
+        Exercise::insert($db_data);
+    }
+
+    public function resolveFields($data_from_keys, $data_to_keys, $handlers, $bulk)
+    {
+        //TODO try to optimize code below
+        $db_data            = [];
+        $bulk_names         = explode(",", $bulk->line);
+        $bulk_count         = count($bulk_names);
+        $names_ids          = array_flip( array_intersect( $bulk_names, $data_from_keys ) );
+        $data_from          = array_flip($data_from_keys);
+        $data_to            = array_flip($data_to_keys);
+        $data_to['id']      = 0;
+        $data_to['bulk_id'] = $bulk->id;
         //TODO check that names not less
 
         $raw = Storage::disk('public')->get(File::find($bulk->file_id)->stor_name);
@@ -117,32 +240,38 @@ class FileController extends Controller
             if(count($data) != $bulk_count)
                 continue;
 
-            $offset_hours = $data[$names['time_offset']] / 3600 / 1000;
-            $duration_sec = $data[$names['duration']] / 1000;
-            $start_time   = $data[$names['start_time']];
-            $distance     = $data[$names['distance']];
-            $mean_speed   = $data[$names['mean_speed']];
-            $live_data    = $data[$names['live_data']];
-            
-            // handle time
-            $dt = new DateTime($start_time);
-            $dt->modify("-".round($offset_hours)." hour");
-            $start_time = $dt->format('Y-m-d H:i:s');
-            
-            // handle blob
-            $stor_name_file = File::where('filename', $live_data)->first()->stor_name;
-            $live_data_blob = Storage::disk('public')->get($stor_name_file);
-            
-            //TODO change to mass DB saving (very slow)
-            $exercise = new Exercise;
-            $exercise->id = $i - 1;
-            $exercise->bulk_id = $bulk->id;
-            $exercise->start_time = $start_time;
-            $exercise->duration = $duration_sec;
-            $exercise->distance = $distance;
-            $exercise->mean_speed = $mean_speed;
-            $exercise->live_data = $live_data_blob;
-            $exercise->save();
+            // filling data_from
+            for($x = current($data_from_keys); $x !== false; $x = next($data_from_keys))
+            {
+                $data_from[$x] = $data[$names_ids[$x]];
+                if($data_from[$x] == "") $data_from[$x] = null;
+            }
+
+            // MAPPING
+            for($x = current($data_to_keys); $x !== false; $x = next($data_to_keys))
+            {
+                $val = null;
+                if(in_array($x, $data_from_keys))
+                {
+                    $val = $data_from[$x];
+                }
+
+                if(array_key_exists($x, $handlers))
+                {
+                    $data_to[$x] = $handlers[$x]($val, $data_from);
+                }
+                else
+                {
+                    $data_to[$x] = $val;
+                }
+            }
+
+            reset($data_to_keys);
+            reset($data_from_keys);
+            $data_to['id'] = $i - 1;
+            $db_data[] = $data_to;
         }
+
+        return $db_data;
     }
 }

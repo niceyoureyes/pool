@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Exercise extends Model
 {
     protected $fillable = [
-        'id', 'bulk_id', 'start_time', 'duration'
+        
     ];
 
     protected $hidden = [
-        'live_data'
+        'id', 'bulk_id', 'live_data', 'addl_data',
+        'fists', 'scapula', 'flippers', 'hand_w', 'foot_w', 'kolobashka', 'length_type'
     ];
 
     public $timestamps = false;

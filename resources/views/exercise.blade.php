@@ -7,15 +7,30 @@
     <h3 class="text-center">Упражнение {{ $id }}</h3>
     <br>
     <div id="app">
-        <ttable :columns="['#', 'Старт', 'Длительность (сек)', 'Дистанция (м)', 'Средняя скорость']"
+        <ttable :columns="{{$names}}"
                 :raws="{{$exercise}}">
         </ttable>
         <br>
-        <h3 class="text-center">Данные (между подходами 1 мин)</h3>
-        <br>
-        <ttable :columns="['#', 'Калории', 'Дистанция', 'Скорость']"
-                :raws="{{$blob}}">
-        </ttable>
+
+        @if ($live_data_string != null)
+            <h3 class="text-center">Пульс</h3>
+            <br>
+            <ttable :columns="['#', 'Время', 'Пульс']"
+                    :raws="{{$live_data_string}}">
+            </ttable>
+            <br>
+        @endif
+
+        @if ($addl_data_string != null)
+            <h3 class="text-center">Дополнительная информация</h3>
+            <br>
+            <h4 class="text-center">{{"Длина бассейна:".$pool_length." ".$pool_length_unit.". Полная дистанция: ".$total_distance}}</h4>
+            <br>
+            <ttable :columns="['#', 'Длительность (сек)', 'Интервал', 'Количество гребков', 'Тип гребка']"
+                    :raws="{{$addl_data_string}}">
+            </ttable>
+            <br>
+        @endif
     </div>
 @endsection
 

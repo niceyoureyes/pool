@@ -38189,20 +38189,12 @@ var render = function() {
             { key: row.id },
             [
               _c("th", { attrs: { scope: "row" } }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(row.id) +
-                    "\n                "
-                )
+                _c("i", [_vm._v(_vm._s(row.id))])
               ]),
               _vm._v(" "),
               _vm._l(row.data, function(val) {
                 return _c("td", { key: val }, [
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(val) +
-                      "\n                "
-                  )
+                  _c("span", { domProps: { innerHTML: _vm._s(val) } })
                 ])
               })
             ],
