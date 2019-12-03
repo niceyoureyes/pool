@@ -6,29 +6,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 use App\Exercise;
+use App\Handler;
 
 use DateTime;
+use DateInterval;
 
 class ExerciseController extends Controller
 {
+    private $data_from      =  [ 'id', 'start_time'  , 'end_time'          , 'duration'    , 'max_tempo'        , 'mean_tempo'  , 'stroke_count'      , 'swolf'     , 'comment'    , 'length_type', 'distance'             ] ;
+    private $data_to        =  [       'start_time'  , 'total_time'        , 'duration'    , 'max_tempo'        , 'mean_tempo'  , 'stroke_count'      , 'swolf'     , 'comment'    , 'length_type', 'distance' , 'link_id' ] ;
+    private $formats        =  [       ['dt','d-m-Y'], ['i','%I:%S']       , ['i','%I:%S'] , ['float',1]        , ['float',1]   ,  null               , ['float',1] ,  null        ,  null        ,  null      ,  null     ] ;
+    private $filters        =  [       'asc_desc'    , 'null'              , 'asc_desc'    , 'asc_desc'         , 'asc_desc'    , 'asc_desc'          , 'asc_desc'  , 'custom1'    , 'vals'       , 'vals'     , 'null'    ] ;
+    private $names          = "[ '#' , 'Дата'        , 'Общая длительность', 'Длительность', 'Максимальный темп', 'Средний темп', 'Количество гребков', 'Swolf'     , 'Комментарий', 'Тип заплыва', 'Дистанция', 'Подробно']";
+
+    // ***** Handlers *****
     public function get(Request $request)
     {
-        $exercises = Exercise::all();
-        $exercises = $exercises->map(function($exercise){
-            $date_end = new DateTime($exercise->end_time);
-            $date_start = new DateTime($exercise->start_time);
-            $date_diff = $date_end->diff($date_start);
-            $exercise->end_time = $date_diff->format("%I:%S"); // this is full time
-            $exercise->link_id = '<a href="'.route('get_exercise_by_id', ['id' => $exercise->id]).'">Подробно</a>';
-            return $exercise;
-        });
-
-        $names = "['#','Начало', 'Общая длительность', 'Длительность', 'Дистанция', 'Средний темп', 'Максимальный темп', 'Комментарий', 'Подробно']";
-
-        $formats = ['dt' => 'Y:M:D', 'i' => '%I:%S', 'float' => '2' ]; //format interface!!!
-        $filters = ['ad', 'eq', 'vals', 'custom'];
-
-        return view('exercises', compact('exercises', 'names') );
+        $exercises = Exercise::all()->toArray();
+        $exercises = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
+        $names = $this->names;
+        $filters = $this->filters;
+        return view('exercises', compact('exercises', 'names', 'filters') );
     }
     
     public function get_by_id(Request $request, $id)
@@ -38,7 +36,7 @@ class ExerciseController extends Controller
         if($exercise == null)
             return abort(404);
 
-        //live data blob
+        /*/live data blob
         $date = new DateTime();
         $live_data_string = null;
         if($exercise->live_data != null)
@@ -55,7 +53,7 @@ class ExerciseController extends Controller
             }
             $live_data_string = json_encode($live_data_array);
             Log::info("Live data output (json string):\n".$live_data_string);
-        }
+        }*/
 
         //addl data blob
         $addl_data_string = null;
@@ -63,32 +61,74 @@ class ExerciseController extends Controller
         {
             $addl_data_string = gzdecode($exercise->addl_data);
             Log::info("Addl data input (json string):\n".$addl_data_string);
-            $addl_data_names  = ["duration", "interval", "stroke_count", "stroke_type"];
             $addl_data_array  =  json_decode($addl_data_string, true);
             $data             = $addl_data_array['lengths'];
             $pool_length      = $addl_data_array['pool_length'];
             $pool_length_unit = $addl_data_array['pool_length_unit'];
             $total_distance   = $addl_data_array['total_distance'];
             $total_duration   = $addl_data_array['total_duration'] / 1000;
-            for($i = 0; $i < count($data); $i++)
-            {
-                $data[$i] = array_intersect_key($data[$i], array_flip($addl_data_names));
-                $data[$i]['duration'] = $data[$i]['duration'] / 1000;
-            }
-            $addl_data_string = json_encode($data);
+            $addl_data_string = $this->resolveAddl($data);
             Log::info("Addl data output (json string):\n".$addl_data_string);
         }
         
-        $date_end = new DateTime($exercise->end_time);
-        $date_start = new DateTime($exercise->start_time);
-        $date_diff = $date_end->diff($date_start);
-        $exercise->end_time = $date_diff->format("%I:%S"); // this is full time
-        $exercise = '['.$exercise->toJson().']'; //TODO think about it, this line must not be here
-        $names = "['#','Начало', 'Общая длительность', 'Длительность', 'Дистанция', 'Средний темп', 'Максимальный темп', 'Комментарий']";
+        //exercise
+        $exercises   = [];
+        $exercises[] = $exercise->toArray();
+        $exercise    = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
+        $names       = $this->names;
 
         Log::info("***** Exercise Controller ***** get_by_id end *****\n");
 
+        //Do not use live_data_string (by AH)
+        $live_data_string = null;
+
         return view('exercise', compact('id', 'exercise', 'names', 'live_data_string', 'addl_data_string',
                                         'pool_length', 'pool_length_unit', 'total_distance', 'total_duration') );
+    }
+
+    // ***** Functions *****
+    public function resolveExercise($data_from, $data_to, $formats, $exercises)
+    {
+        $hnd = new Handler();
+
+        $handlers = [
+            'total_time' => function($x, $d)
+            {
+                $date_end = new DateTime($d['end_time']);
+                $date_start = new DateTime($d['start_time']);
+                return $date_end->diff($date_start);
+            },
+            'link_id'    => function($x, $d)
+            {
+                return '<a href="'.route('get_exercise_by_id', ['id' => $d['id']] ).'">Подробно</a>';
+            },
+            'duration' => function($x, $d)
+            {
+                return new DateInterval('PT'.floor(round($x) / 60).'M'.(round($x) % 60).'S');
+            }
+        ];
+
+        $exercises = $hnd->resolveFields($data_from, $data_to, $handlers, $formats, $exercises);
+        return json_encode($exercises);
+    }
+
+    public function resolveAddl($data)
+    {
+        $hnd = new Handler();
+
+        $data_from  =  [ 'duration'    , 'interval', 'stroke_count'      , 'stroke_type' ] ;
+        $data_to    =  [ 'duration'    , 'interval', 'stroke_count'      , 'stroke_type' ] ;
+        $formats    =  [ ["i","%I:%S"] ,  null     ,  null               ,  null         ] ;
+
+        $handlers = [
+            'duration' => function($x){
+                $x = $x / 1000;
+                return new DateInterval('PT'.floor(round($x) / 60).'M'.(round($x) % 60).'S');
+            }
+        ];
+
+        $data = $hnd->resolveFields($data_from, $data_to, $handlers, $formats, $data);
+
+        return json_encode($data);
     }
 }

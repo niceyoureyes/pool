@@ -2002,8 +2002,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['columns', 'raws'],
   data: function data() {
@@ -38163,47 +38161,41 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("table", { staticClass: "table" }, [
-      _c("thead", [
-        _c(
-          "tr",
-          _vm._l(_vm.cols, function(col) {
-            return _c("th", { key: col.id, attrs: { scope: "col" } }, [
-              _vm._v(
-                "\n                    " +
-                  _vm._s(col.name) +
-                  "\n                "
-              )
-            ])
-          }),
-          0
-        )
-      ]),
-      _vm._v(" "),
+  return _c("table", { staticClass: "table" }, [
+    _c("thead", [
       _c(
-        "tbody",
-        _vm._l(_vm.rows, function(row) {
-          return _c(
-            "tr",
-            { key: row.id },
-            [
-              _c("th", { attrs: { scope: "row" } }, [
-                _c("i", [_vm._v(_vm._s(row.id))])
-              ]),
-              _vm._v(" "),
-              _vm._l(row.data, function(val) {
-                return _c("td", { key: val }, [
-                  _c("span", { domProps: { innerHTML: _vm._s(val) } })
-                ])
-              })
-            ],
-            2
-          )
+        "tr",
+        _vm._l(_vm.cols, function(col) {
+          return _c("th", { key: col.id, attrs: { scope: "col" } }, [
+            _vm._v("\n                " + _vm._s(col.name) + "\n            ")
+          ])
         }),
         0
       )
-    ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "tbody",
+      _vm._l(_vm.rows, function(row) {
+        return _c(
+          "tr",
+          { key: row.id },
+          [
+            _c("th", { attrs: { scope: "row" } }, [
+              _c("i", [_vm._v(_vm._s(row.id))])
+            ]),
+            _vm._v(" "),
+            _vm._l(row.data, function(val) {
+              return _c("td", { key: val }, [
+                _c("span", { domProps: { innerHTML: _vm._s(val) } })
+              ])
+            })
+          ],
+          2
+        )
+      }),
+      0
+    )
   ])
 }
 var staticRenderFns = []

@@ -64,7 +64,7 @@
 			</div>
 		</nav>
 
-		<main role="main" class="container" style="margin-top: 80px;">
+		<main role="main" class="container-fluid" style="margin-top: 80px;">
 			@yield('content')
 		</main>
 	

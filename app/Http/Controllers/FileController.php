@@ -14,6 +14,7 @@ use DateTime;
 
 class FileController extends Controller
 {
+    // ***** Handlers *****
     public function load(Request $request)
     {
         Log::info("***** FileController ***** BEGIN loading *****");
@@ -97,54 +98,53 @@ class FileController extends Controller
         return redirect()->route('exercises');
     }
 
-    // ***** resolving handlers *****
-
+    // ***** Functions *****
     public function resolveExercise(Bulk $bulk)
     {
         $data_from      = ['time_offset', 'start_time', 'end_time' , 'duration',
                            'max_speed'  , 'mean_speed', 'live_data', 'comment' ,
                            'distance'   , 'additional' ];
         
-        $data_to        = [               'start_time', 'end_time' , 'duration',
-                           'max_tempo'  , 'mean_tempo', 'live_data', 'comment' ,
-                           'fists'      , 'scapula'   , 'flippers' ,
+        $data_to        = [               'start_time', 'end_time'  , 'duration',
+                           'max_tempo'  , 'mean_tempo', 'live_data' , 'comment' ,
+                           'fists'      , 'scapula'   , 'flippers'  ,
                            'hand_w'     , 'foot_w'    , 'kolobashka',
-                           'length_type', 'distance'  , 'addl_data'];
+                           'length_type', 'distance'  , 'addl_data' , 'swolf', 'stroke_count' ];
 
         $handlers = [
-            'duration'    => function($x, $d){
+            'duration'    => function(&$x){
                 return $x / 1000;
             },
 
-            'mean_tempo'  => function($x, $d){
+            'mean_tempo'  => function(&$x, &$d){
                 if( $d['mean_speed'] == 0)
                     return 0;
                 else
                     return 100 / $d['mean_speed'];
             },
 
-            'max_tempo'   => function($x, $d){
+            'max_tempo'   => function(&$x, &$d){
                 if( $d['max_speed'] == 0)
                     return 0;
                 else
                     return 100 / $d['max_speed'];
             },
 
-            'start_time'  => function($x, $d){
+            'start_time'  => function(&$x, &$d){
                 $offset_hours = $d['time_offset'] / 3600 / 1000;
                 $dt = new DateTime($x);
                 $dt->modify("-".round($offset_hours)." hour");
                 return $dt->format('Y-m-d H:i:s');
             },
 
-            'end_time'    => function($x, $d){
+            'end_time'    => function(&$x, &$d){
                 $offset_hours = $d['time_offset'] / 3600 / 1000;
                 $dt = new DateTime($x);
                 $dt->modify("-".round($offset_hours)." hour");
                 return $dt->format('Y-m-d H:i:s');
             },
 
-            'live_data'   => function($x, $d){
+            'live_data'   => function(&$x){
                 $data_file = File::where('filename', $x)->first();
                 if ($data_file == null)
                 {
@@ -156,7 +156,7 @@ class FileController extends Controller
                 }
             },
 
-            'addl_data'   => function($x, $d){
+            'addl_data'   => function(&$x, &$d){
                 $x = $d['additional'];
                 $data_file = File::where('filename', $x)->first();
                 if ($data_file == null)
@@ -169,49 +169,60 @@ class FileController extends Controller
                 }
             },
 
-            'fists'       => function($x, $d){
+            'fists'       => function(&$x, &$d){
                 if(mb_stripos($d['comment'], 'кулаки') === false)
                     return 0;
                 else
                     return 1;
             }, 
             
-            'scapula'     => function($x, $d){
+            'scapula'     => function(&$x, &$d){
                 if(mb_stripos($d['comment'], 'лопатки') === false)
                     return 0;
                 else
                     return 1;
             },
             
-            'flippers'    => function($x, $d){
+            'flippers'    => function(&$x, &$d){
                 if(mb_stripos($d['comment'], 'ласты') === false)
                     return 0;
                 else
                     return 1;
             },
 
-            'hand_w'      => function($x, $d){
+            'hand_w'      => function(&$x, &$d){
                 if(mb_stripos($d['comment'], 'руки') === false )
                     return 0;
                 else
                     return 1;
             },
             
-            'foot_w'      => function($x, $d){
+            'foot_w'      => function(&$x, &$d){
                 if(mb_stripos($d['comment'], 'ноги') === false)
                     return 0;
                 else
                     return 1;
             },
             
-            'kolobashka'  => function($x, $d){
+            'kolobashka'  => function(&$x, &$d){
                 if(mb_stripos($d['comment'], 'колобашка') === false)
                     return 0;
                 else
                     return 1;
+            },
+
+            'swolf'       => function(&$x, &$d, &$y){
+                $r = Exercise::get_from_addldata($y['addl_data']);
+                return $r['swolf'];
+            },
+
+            'stroke_count'=> function(&$x, &$d, &$y){
+                $r = Exercise::get_from_addldata($y['addl_data']);
+                return $r['stroke_count'];
             }
         ];
 
+        //TODO class Handler function
         $db_data = $this->resolveFields($data_from, $data_to, $handlers, $bulk);
         Exercise::insert($db_data);
     }
@@ -258,7 +269,7 @@ class FileController extends Controller
 
                 if(array_key_exists($x, $handlers))
                 {
-                    $data_to[$x] = $handlers[$x]($val, $data_from);
+                    $data_to[$x] = $handlers[$x]($val, $data_from, $data_to);
                 }
                 else
                 {
