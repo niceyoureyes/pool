@@ -2025,9 +2025,21 @@ __webpack_require__.r(__webpack_exports__);
       for (var _i = 0; _i < this.raws.length; _i++) {
         var row = [];
         row.id = _i + 1;
-        row.data = this.raws[_i];
+        row.data = [];
+
+        for (var j in this.raws[_i]) {
+          var d = [];
+          d.val = this.raws[_i][j];
+          d.id = j;
+          row.data.push(d);
+        }
+
         this.rows.push(row);
       }
+    },
+    TableColumnChange: function TableColumnChange(col) {
+      console.log(col.id);
+      console.log(col.name);
     }
   }
 });
@@ -38166,9 +38178,19 @@ var render = function() {
       _c(
         "tr",
         _vm._l(_vm.cols, function(col) {
-          return _c("th", { key: col.id, attrs: { scope: "col" } }, [
-            _vm._v("\n                " + _vm._s(col.name) + "\n            ")
-          ])
+          return _c(
+            "th",
+            {
+              key: col.id,
+              attrs: { scope: "col" },
+              on: {
+                click: function($event) {
+                  return _vm.TableColumnChange(col)
+                }
+              }
+            },
+            [_c("span", { domProps: { innerHTML: _vm._s(col.name) } })]
+          )
         }),
         0
       )
@@ -38185,9 +38207,9 @@ var render = function() {
               _c("i", [_vm._v(_vm._s(row.id))])
             ]),
             _vm._v(" "),
-            _vm._l(row.data, function(val) {
-              return _c("td", { key: val }, [
-                _c("span", { domProps: { innerHTML: _vm._s(val) } })
+            _vm._l(row.data, function(e) {
+              return _c("td", { key: e.id }, [
+                _c("span", { domProps: { innerHTML: _vm._s(e.val) } })
               ])
             })
           ],

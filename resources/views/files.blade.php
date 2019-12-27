@@ -15,9 +15,11 @@
     </div>
     <br>
     <div id="app">
-        <ttable :columns="['#', 'Имя файла', 'Имя файла на сервере', 'Расширение']"
-                :raws="{{$files}}">
-        </ttable>
+        <div class="container">
+            <ttable :columns="['#', 'Имя файла', 'Имя файла на сервере', 'Расширение']"
+                    :raws="{{$files}}">
+            </ttable>
+        </div>
     </div>
 @endsection
 
