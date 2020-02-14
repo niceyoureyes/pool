@@ -9,7 +9,14 @@
         <div class="row justify-content-center">
             <div class="col-9">
                 <ttable :columns="{{$names}}"
-                        :raws="{{$exercises}}">
+                        :raws="{{$exercises}}"
+                        @if (isset($indexes) && $indexes != null)
+                            :indexes="{{$indexes}}"
+                        @endif
+                        @if (isset($filters) && $filters != null)
+                            :filters="{{$filters}}"
+                        @endif
+                        >
                 </ttable>
             </div>
         </div>

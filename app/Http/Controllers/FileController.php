@@ -213,7 +213,14 @@ class FileController extends Controller
 
             'swolf'       => function(&$x, &$d, &$y){
                 $r = Exercise::get_from_addldata($y['addl_data']);
-                return $r['swolf'];
+
+                if($d['distance'] == 0)
+                {
+                    return null;
+                }
+                else{
+                    return $r['swolf'] / $d['distance'] * 100;
+                }
             },
 
             'stroke_count'=> function(&$x, &$d, &$y){

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 use App\Exercise;
-use App\Handler;
+use App\Table;
 
 use DateTime;
 use DateInterval;
@@ -17,7 +17,7 @@ class ExerciseController extends Controller
     private $data_from      =  [ 'id'  , 'start_time'                        , 'end_time'          , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                            ] ;
     private $data_to        =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                , 'link_id' ] ;
     private $data_to_2      =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                            ] ;
-    private $formats        =  [         ['dt','d-m-Y']                      , ['i','%I:%S']       , ['i','%I:%S']                       , ['float',1]                         , ['float',1]                            ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                     ,  null     ] ;
+    private $formats        =  [         ['dt','d-m-Y']                      , ['i','%I:%S']       , ['i','%I:%S']                       , ['i','%I:%S']                       , ['i','%I:%S']                          ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                     ,  null     ] ;
     private $filters        =  [  null , ['start_time', 'asc_desc', null]    ,  null               , ['duration', 'asc_desc', null]      , ['max_tempo', 'asc_desc', null]     , ['mean_tempo', 'asc_desc', null]       , ['stroke_count', 'asc_desc', null]           , ['swolf', 'asc_desc', null]          , 'custom1'    , 'vals'       , ['distance', 'vals', 100] ,  null     ] ;
     private $names          =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'               , 'Подробно'] ;
     private $names_2        =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'                           ] ;
@@ -25,40 +25,47 @@ class ExerciseController extends Controller
     // ***** Handlers *****
     public function get(Request $request)
     {
-        $filt = [];
-        $indexes = [];
-        $newfilter = null;
-        $exercises = Exercise::whereNotNull('id'); // fake call to change type
-
-        if( $request->has('newfilter') )
+        if( $request->has('newfilter') && $request->has('indexes') && $request->has('filters'))
         {
             $n = $request->input('newfilter');
+            $filters = $request->input('filters');
+            $indexes = $request->input('indexes');
             $newfilter = $this->filters[$n];
             $newfilter[] = $n;
+
+            Table::create_filter(new Exercise, $filters, $indexes, $newfilter);
+
+            redirect()->route('exercises', copmact('filters', 'indexes'));
         }
 
-        if( $request->has('indexes') )
+        if( $request->has('indexes') && $request->has('filters') )
         {
+            $filters = $request->has('filters');
             $indexes = $request->input('indexes');
+            $exercises = Table::filter(new Exercise, $filters);
+            $exercises = $exercises->get();
+            $exercises = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
+
+            $names = $this->names;
+            return view('exercises', compact('exercises', 'names', 'filters', 'indexes') );
         }
 
-        if( $request->has('filters') )
-        {
-            $filt = json_decode($request->input('filters'));
-        }
-
-        if($newfilter !== null || count($filt) != 0)
-        {
-            Log::info('Performing filter: '.json_encode($filt));
-            Handler::filter($exercises, $filt, $indexes, $newfilter);
-            Log::info(json_encode($indexes));
-        }
-
-        $exercises = $exercises->get();
+        $indexes   = [];
+        $names     = $this->names;
+        $filters   = $this->filters;
+        $exercises = Exercise::whereNotNull('id')->get();
         $exercises = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
+
+        $names = json_encode($names);
+        $filters = json_encode($filters);
+        $indexes = json_encode($indexes);
+
+        return view('exercises', compact('exercises', 'names', 'filters', 'indexes') );
+
         
-        $names = $this->names;
-        $filters = $this->filters;
+
+        
+        /*
         for($i = 0; $i < count($names); $i++)
         {
             if($filters[$i] != null)
@@ -92,8 +99,7 @@ class ExerciseController extends Controller
             }
         }
         $names = json_encode($names);
-
-        return view('exercises', compact('exercises', 'names') );
+        */
     }
     
     public function get_by_id(Request $request, $id)
@@ -166,14 +172,10 @@ class ExerciseController extends Controller
             'link_id'    => function($x, $d)
             {
                 return '<a href="'.route('get_exercise_by_id', ['id' => $d['id']] ).'">Подробно</a>';
-            },
-            'duration' => function($x, $d)
-            {
-                return new DateInterval('PT'.floor(round($x) / 60).'M'.(round($x) % 60).'S');
             }
         ];
 
-        $exercises = Handler::resolveFields($data_from, $data_to, $handlers, $formats, $exercises);
+        $exercises = Table::resolveFields($data_from, $data_to, $handlers, $formats, $exercises);
         return json_encode($exercises);
     }
 
@@ -190,7 +192,7 @@ class ExerciseController extends Controller
             }
         ];
 
-        $data = Handler::resolveFields($data_from, $data_to, $handlers, $formats, $data);
+        $data = Table::resolveFields($data_from, $data_to, $handlers, $formats, $data);
 
         return json_encode($data);
     }
