@@ -22,6 +22,7 @@ window.Vue = require('vue');
 Vue.component('articles', require('./components/articles.vue').default);
 Vue.component('loader', require('./components/loader.vue').default);
 Vue.component('ttable', require('./components/table.vue').default);
+Vue.component('ttcolumn', require('./components/table_column.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

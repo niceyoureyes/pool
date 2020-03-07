@@ -14,13 +14,13 @@ use DateInterval;
 
 class ExerciseController extends Controller
 {
-    private $data_from      =  [ 'id'  , 'start_time'                        , 'end_time'          , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                            ] ;
-    private $data_to        =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                , 'link_id' ] ;
-    private $data_to_2      =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                            ] ;
-    private $formats        =  [         ['dt','d-m-Y']                      , ['i','%I:%S']       , ['i','%I:%S']                       , ['i','%I:%S']                       , ['i','%I:%S']                          ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                     ,  null     ] ;
-    private $filters        =  [  null , ['start_time', 'asc_desc', null]    ,  null               , ['duration', 'asc_desc', null]      , ['max_tempo', 'asc_desc', null]     , ['mean_tempo', 'asc_desc', null]       , ['stroke_count', 'asc_desc', null]           , ['swolf', 'asc_desc', null]          , 'custom1'    , 'vals'       , ['distance', 'vals', 100] ,  null     ] ;
-    private $names          =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'               , 'Подробно'] ;
-    private $names_2        =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'                           ] ;
+    private $data_from      =  [ 'id'  , 'start_time'                        , 'end_time'          , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                             ] ;
+    private $data_to        =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                 , 'link_id' ] ;
+    private $data_to_2      =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                             ] ;
+    private $formats        =  [         ['dt','d-m-Y']                      , ['i','%I:%S']       , ['i','%I:%S']                       , ['i','%I:%S']                       , ['i','%I:%S']                          ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                      ,  null     ] ;
+    private $filters        =  [  null , ['start_time', 'asc_desc', null]    ,  null               , ['duration', 'asc_desc', null]      , ['max_tempo', 'asc_desc', null]     , ['mean_tempo', 'asc_desc', null]       , ['stroke_count', 'asc_desc', null]           , ['swolf', 'asc_desc', null]          ,  null        ,  null        , ['distance', 'vals', null] ,  null     ] ;
+    private $names          =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'                , 'Подробно'] ;
+    private $names_2        =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'                            ] ;
 
     // ***** Handlers *****
     public function get(Request $request)
@@ -28,39 +28,61 @@ class ExerciseController extends Controller
         if( $request->has('newfilter') && $request->has('indexes') && $request->has('filters'))
         {
             $n = $request->input('newfilter');
-            $filters = $request->input('filters');
-            $indexes = $request->input('indexes');
+            $filters = json_decode($request->input('filters'), true);
+            $indexes = json_decode($request->input('indexes'), true);
             $newfilter = $this->filters[$n];
             $newfilter[] = $n;
 
             Table::create_filter(new Exercise, $filters, $indexes, $newfilter);
 
-            redirect()->route('exercises', copmact('filters', 'indexes'));
+            return redirect()->route('exercises', ['filters' => json_encode($filters), 'indexes' => json_encode($indexes)]);
         }
 
         if( $request->has('indexes') && $request->has('filters') )
         {
-            $filters = $request->has('filters');
-            $indexes = $request->input('indexes');
+            $filters = json_decode($request->input('filters'), true);
+            $indexes = json_decode($request->input('indexes'), true);
             $exercises = Table::filter(new Exercise, $filters);
             $exercises = $exercises->get();
             $exercises = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
-
             $names = $this->names;
-            return view('exercises', compact('exercises', 'names', 'filters', 'indexes') );
+
+            //maybe need to use Vue router!
+            $url = route('exercises', ['filters' => json_encode($filters), 'indexes' => json_encode($indexes), 'newfilter' => 0]);
+            
+            //Set all filters
+            $filters = $this->filters;
+            
+            //wrapping
+            $url = json_encode($url);
+            $names = json_encode($names);
+            $filters = json_encode($filters);
+            $indexes = json_encode($indexes);
+
+            return view('exercises', compact('exercises', 'names', 'filters', 'indexes', 'url') );
         }
 
-        $indexes   = [];
-        $names     = $this->names;
-        $filters   = $this->filters;
-        $exercises = Exercise::whereNotNull('id')->get();
-        $exercises = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
+        {
+            $filters   = [];
+            $indexes   = [];
+            $exercises = Exercise::whereNotNull('id')->get();
+            $exercises = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
+            $names     = $this->names;
+            
+            //maybe need to use Vue router!
+            $url = route('exercises', ['filters' => json_encode($filters), 'indexes' => json_encode($indexes), 'newfilter' => 0]);
+            
+            //Set all filters
+            $filters   = $this->filters;
+            
+            //wrapping
+            $url = json_encode($url);
+            $names = json_encode($names);
+            $filters = json_encode($filters);
+            $indexes = json_encode($indexes);
 
-        $names = json_encode($names);
-        $filters = json_encode($filters);
-        $indexes = json_encode($indexes);
-
-        return view('exercises', compact('exercises', 'names', 'filters', 'indexes') );
+            return view('exercises', compact('exercises', 'names', 'filters', 'indexes', 'url') );
+        }
 
         
 

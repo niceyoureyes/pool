@@ -11,10 +11,13 @@
                 <ttable :columns="{{$names}}"
                         :raws="{{$exercises}}"
                         @if (isset($indexes) && $indexes != null)
-                            :indexes="{{$indexes}}"
+                                   :indexes= "{{$indexes}}"
                         @endif
                         @if (isset($filters) && $filters != null)
-                            :filters="{{$filters}}"
+                                   :filters= "{{$filters}}"
+                        @endif
+                        @if (isset($url) && $url != null)
+                                   :url= "{{$url}}"
                         @endif
                         >
                 </ttable>

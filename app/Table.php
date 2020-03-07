@@ -155,7 +155,7 @@ class Table
         {
             if($filt[$i] === null)
                 continue;
-                
+
             $name = $filt[$i][0];
             $type = $filt[$i][1];
             $val  = $filt[$i][2];
@@ -179,10 +179,13 @@ class Table
                         unset($filt[$i]);
                         unset($indexes[$index]);
                         $filt = array_values($filt);
+                        break;
                     }
                 }
                 else if($type == 'vals')
                 {
+                    if($val == null) $val = 0; // Only positive vars!!!!
+
                     $m = $model::where($name, '>', $val)->orderBy($name, 'asc')->first();
 
                     if($m === null)
@@ -190,6 +193,7 @@ class Table
                         unset($filt[$i]);
                         unset($indexes[$index]);
                         $filt = array_values($filt);
+                        break;
                     }
                     else
                     {
@@ -204,7 +208,7 @@ class Table
                 $filt[$i][0] = $name;
                 $filt[$i][1] = $type;
                 $filt[$i][2] = $val;
-                $indexes[$index] = $val;
+                $indexes[$index] = $filt[$i];
 
                 break;
             }

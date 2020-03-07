@@ -3,7 +3,13 @@
         <thead>
             <tr>
                 <th scope="col" v-for="col in cols" v-bind:key="col.id" v-on:click="TableColumnChange(col)">
-                    <span v-html="col.name"></span>
+                    <ttcolumn v-if="indexes" :id = "col.id"
+                                             :name = "col.name"
+                                             :ind = "indexes1[col.id - 1]"
+                                             :fil = "filters1[col.id - 1]"
+                                             :url = "url">
+                    </ttcolumn>
+                    <span v-else>{{ col.name }}</span>
                 </th>
             </tr>
         </thead>
@@ -23,15 +29,19 @@
 <script>
 export default {
     props: [
-        'columns', 'raws'
+        'columns', 'raws', 'indexes', 'filters', 'url'
     ],
     data(){
         return{
             cols: [],
             rows: [],
+            indexes1: null,
+            filters1: null
         }
     },
     mounted(){
+        this.indexes1 = this.indexes;
+        this.filters1 = this.filters;
         this.update();
     },
     methods:{
