@@ -40,3 +40,8 @@ Route::prefix('exercises')->group(function(){
     Route::get( '/'       , 'ExerciseController@get')->name('exercises');
     Route::get( '{id}'    , 'ExerciseController@get_by_id')->where(['id' => '[0-9]+'])->name('get_exercise_by_id');
 });
+
+Route::prefix('graph')->group(function(){
+    Route::get( '/'       , 'GraphController@get')->name('graph');
+    Route::get( '/example', function(){ return view('graph_example'); })->name('graph_example');
+});
