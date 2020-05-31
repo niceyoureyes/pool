@@ -3,13 +3,19 @@
         <thead>
             <tr>
                 <th scope="col" v-for="col in cols" v-bind:key="col.id" v-on:click="TableColumnChange(col)">
-                    <ttcolumn v-if="indexes" :id = "col.id"
-                                             :name = "col.name"
-                                             :ind = "indexes1[col.id - 1]"
-                                             :fil = "filters1[col.id - 1]"
-                                             :url = "url">
-                    </ttcolumn>
-                    <span v-else>{{ col.name }}</span>
+                    <div class="row form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" :id="'check' + col.id" :value="col.id">
+                        <label class="form-check-label">{{ col.id }}</label>
+                    </div>
+                    <div class="row mt-4">
+                        <ttcolumn v-if="indexes" :id = "col.id"
+                                                 :name = "col.name"
+                                                 :ind = "indexes1[col.id - 1]"
+                                                 :fil = "filters1[col.id - 1]"
+                                                 :url = "url">
+                        </ttcolumn>
+                        <span v-else>{{ col.name }}</span>
+                    </div>
                 </th>
             </tr>
         </thead>

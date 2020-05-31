@@ -25,6 +25,32 @@ class ExerciseController extends Controller
     // ***** Handlers *****
     public function get(Request $request)
     {
+        /* Redirect to Graph */
+        if( $request->has('newfilter') && $request->has('xy') && $request->has('filters') && $request->input('newfilter') == 0 )
+        {
+            $xy = json_decode($request->input('xy'));
+            $filters = json_decode($request->input('filters'), true);
+            $exercises = Table::filter(new Exercise, $filters);
+            $exercises = $exercises->get();
+            $exercises = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
+            $names = $this->names;
+
+            $label_x = $names[$xy[0] - 1];
+            $label_y = $names[$xy[1] - 1];
+
+            $exercises = json_decode($exercises, true); // enc + dec!!!
+            $input_data = [];
+            for($i = 0; $i < count($exercises); $i++)
+            {
+                $x = $exercises[$i][ $this->data_to[$xy[0] - 2]] * 1;
+                $y = $exercises[$i][ $this->data_to[$xy[1] - 2]] * 1;
+                $input_data[] = ['x' => $x, 'y' => $y];
+            }
+
+            return redirect()->route('graph', ['label_x' => $label_x, 'label_y' => $label_y, 'input_data' => $input_data]);
+        }
+
+        /* Creating filter. Redirect to youself */
         if( $request->has('newfilter') && $request->has('indexes') && $request->has('filters'))
         {
             $n = $request->input('newfilter');
@@ -38,6 +64,7 @@ class ExerciseController extends Controller
             return redirect()->route('exercises', ['filters' => json_encode($filters), 'indexes' => json_encode($indexes)]);
         }
 
+        /* Filter and show result */
         if( $request->has('indexes') && $request->has('filters') )
         {
             $filters = json_decode($request->input('filters'), true);
@@ -62,6 +89,7 @@ class ExerciseController extends Controller
             return view('exercises', compact('exercises', 'names', 'filters', 'indexes', 'url') );
         }
 
+        /* Show all exercises */
         {
             $filters   = [];
             $indexes   = [];
@@ -83,45 +111,6 @@ class ExerciseController extends Controller
 
             return view('exercises', compact('exercises', 'names', 'filters', 'indexes', 'url') );
         }
-
-        
-
-        
-        /*
-        for($i = 0; $i < count($names); $i++)
-        {
-            if($filters[$i] != null)
-            {
-                $var = false;
-                $name = $names[$i];
-                $names[$i] = '';
-
-                if(isset($indexes[$i]) && $indexes[$i] == 'asc')
-                {
-                    $var = true;
-                    $names[$i] = $names[$i].'<span class="dropup">';
-                }
-                else if(isset($indexes[$i]) && $indexes[$i] == 'desc')
-                {
-                    $var = true;
-                    $names[$i] = $names[$i].'<span class="dropdown">';
-                }
-                else
-                {
-                    $names[$i] = $names[$i].'<span>';
-                }
-
-                $names[$i] = $names[$i].'<a ';
-                
-                if($var)
-                    $names[$i] = $names[$i].'class="dropdown-toggle" ';
-
-                $names[$i] = $names[$i].'href="'.route('exercises', ['filters' => json_encode($filt), 'indexes' => $indexes, 'newfilter' => $i] ).'">'.$name.'</a>
-                </span>';
-            }
-        }
-        $names = json_encode($names);
-        */
     }
     
     public function get_by_id(Request $request, $id)

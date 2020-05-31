@@ -26,6 +26,7 @@ Vue.component('ttcolumn', require('./components/table_column.vue').default);
 Vue.component('graph_line_chart', require('./components/graph_line_chart.vue').default);
 Vue.component('graph_scatter', require('./components/graph_scatter.vue').default);
 Vue.component('graph', require('./components/graph.vue').default);
+Vue.component('to_graph', require('./components/to_graph.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

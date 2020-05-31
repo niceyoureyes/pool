@@ -1,5 +1,5 @@
 <template>
-  <div class="small">
+  <div>
     <scatter :chart-data="datacollection" :chart-options="options"></scatter>
   </div>
 </template>
@@ -42,7 +42,7 @@
             showLine: true,
             data: [],
           }]
-        }
+        };
       }
     }
   }

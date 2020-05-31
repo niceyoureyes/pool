@@ -4,26 +4,30 @@
 @endsection
 
 @section('content')
-    <h3 class="text-center">Упражнения</h3>
-    <div id="app">
-        <div class="row justify-content-center">
-            <div class="col-9">
-                <ttable :columns="{{$names}}"
-                        :raws="{{$exercises}}"
-                        @if (isset($indexes) && $indexes != null)
-                                   :indexes= "{{$indexes}}"
-                        @endif
-                        @if (isset($filters) && $filters != null)
-                                   :filters= "{{$filters}}"
-                        @endif
-                        @if (isset($url) && $url != null)
-                                   :url= "{{$url}}"
-                        @endif
-                        >
-                </ttable>
+    <!-- <div style="display:none"> $exercises </div> -->
+    <form action="">
+        <div id="app">
+            <to_graph :url="{{$url}}"
+                      >
+            </to_graph>
+            <br>
+            <div class="row justify-content-center">
+                <div class="col-9">
+                    <ttable :columns="{{$names}}"
+                            :raws="{{$exercises}}"
+                            :url= "{{$url}}"
+                            @if (isset($indexes) && $indexes != null)
+                                    :indexes= "{{$indexes}}"
+                            @endif
+                            @if (isset($filters) && $filters != null)
+                                    :filters= "{{$filters}}"
+                            @endif
+                            >
+                    </ttable>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 @endsection
 
 @section('js')
