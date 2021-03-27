@@ -95,20 +95,50 @@ class Table
             {
                 $data = new DateInterval($data);
             }
+            else if($type == 'float')
+            {
+                if( strpos($data, ' ') === false )
+                {
+                    $data = number_format($data, $fm, '.', '');
+                }
+                else
+                {
+                    $data = new DateTime($data);
+                    $data = $data = $data->getTimestamp();
+                }
+            }
         }
-
-        if( gettype($data) == 'double' || gettype($data) == 'integer' )
+        // FROM DOUBLE INTEGER
+        else if( gettype($data) == 'double' || gettype($data) == 'integer' )
         {
             if($type == 'i')
             {
                 $data = new DateInterval('PT'.floor(round($data) / 60).'M'.(round($data) % 60).'S');
             }
         }
+        // FROM DateInterval DateTime
+        else if( gettype($data) == 'object' )
+        {
+            if(get_class($data) == 'DateInterval')
+            {
+                if($type == 'float')
+                {
+                    $data = $data->i * 60 + $data->s;
+                }
+            }
+            else if(get_class($data) == 'DateTime')
+            {
+                if($type == 'float')
+                {
+                    $data = $data->getTimestamp();
+                }
+            }
+        }
 
         // PERFORM FMT
         if($type == 'float')
         {
-            $res = number_format($data, $fm, '.', '');
+            $res = $data;
         }
         else{
             $res = $data->format($fm);

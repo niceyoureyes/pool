@@ -3,11 +3,9 @@
         <thead>
             <tr>
                 <th scope="col" v-for="col in cols" v-bind:key="col.id" v-on:click="TableColumnChange(col)">
-                    <div class="row form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" :id="'check' + col.id" :value="col.id">
-                        <label class="form-check-label">{{ col.id }}</label>
-                    </div>
-                    <div class="row mt-4">
+                    <tsettings v-if="settings" :id="col.id" class="mb-4">
+                    </tsettings>
+                    <div class="row">
                         <ttcolumn v-if="indexes" :id = "col.id"
                                                  :name = "col.name"
                                                  :ind = "indexes1[col.id - 1]"
@@ -35,7 +33,7 @@
 <script>
 export default {
     props: [
-        'columns', 'raws', 'indexes', 'filters', 'url'
+        'columns', 'raws', 'indexes', 'filters', 'url', 'settings'
     ],
     data(){
         return{

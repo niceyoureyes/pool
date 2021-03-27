@@ -18,10 +18,15 @@ export default {
     ],
     methods:{
         Go(url){
-            let array =  $("input[type='checkbox']:checked").map(function(){
-                return this.value;
+            let x = $("input[name='radio-stacked-X']:checked").map(function(){
+                return $(this).attr('id');
+            }).get();
+            
+            let y = $("input[name='radio-stacked-Y']:checked").map(function(){
+                return $(this).attr('id');
             }).get();
 
+            let array = [("" + x).substring(2), ("" + y).substring(2)];
             array = JSON.stringify(array);
             url = url + '&xy=' + array;
 

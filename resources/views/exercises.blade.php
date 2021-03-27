@@ -16,6 +16,7 @@
                     <ttable :columns="{{$names}}"
                             :raws="{{$exercises}}"
                             :url= "{{$url}}"
+                            :settings="1"
                             @if (isset($indexes) && $indexes != null)
                                     :indexes= "{{$indexes}}"
                             @endif
