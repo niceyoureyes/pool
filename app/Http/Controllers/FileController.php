@@ -10,6 +10,7 @@ use App\File;
 use App\Bulk;
 use App\Exercise;
 
+use Auth;
 use DateTime;
 
 class FileController extends Controller
@@ -19,7 +20,7 @@ class FileController extends Controller
     {
         Log::info("***** FileController ***** BEGIN loading *****");
 
-        $path = $request->file('file')->store('uploads', 'public');
+        $path = $request->file('file')->store('uploads'.Auth::user()->id, 'public');
         $ext  = $request->file('file')->extension();
         $name = $request->name;
 
@@ -34,6 +35,7 @@ class FileController extends Controller
         $file->ext = $ext;
         $file->filename = $name;
         $file->stor_name = $path;
+        $file->user_id = Auth::user()->id;
         $file->save();
         $file_id = $file->id;
 
@@ -51,6 +53,7 @@ class FileController extends Controller
                 $bulk->file_id = $file_id;
                 $bulk->type = $raws[0];
                 $bulk->line = $raws[1];
+                $bulk->user_id = Auth::user()->id;
                 $bulk->save();
             }
         }
@@ -61,22 +64,31 @@ class FileController extends Controller
 
     public function get(Request $request)
     {
-        $files = File::all();
-        $files = $files->map(function($file){
-            $file->stor_name = substr($file->stor_name, 0, 20);
-            unset($file->id);
-            return $file;
-        });
+        $files = File::where('user_id', Auth::user()->id)->get();
+
+        for($i = 0; $i < count($files); $i++)
+        {
+            $files[$i]["stor_name"] = substr($files[$i]["stor_name"], 0, 20);
+        }
+
         return view('files', compact('files') );
     }
 
     public function clear(Request $request)
     {
         // TODO maybe delete only files
-        Exercise::query()->delete();
-        Bulk::query()->delete();
-        File::query()->delete();
-        Storage::disk('public')->deleteDirectory('uploads');
+        $user_id = Auth::user()->id;
+
+        $bulk = Bulk::where('user_id', $user_id)->first();
+        if($bulk)
+        {
+            Exercise::where('bulk_id', $bulk->id)->delete();
+        }
+
+        Bulk::where('user_id', $user_id)->delete();
+        File::where('user_id', $user_id)->delete();
+
+        Storage::disk('public')->deleteDirectory('uploads'.Auth::user()->id);
 
         return redirect()->route('files');
     }
@@ -84,16 +96,19 @@ class FileController extends Controller
     public function resolve(Request $request)
     {
         Log::info("***** FileController ***** BEGIN resolving files *****");
-        Exercise::query()->delete();
-        $bulks = Bulk::all();
 
-        foreach($bulks as $bulk)
+        $user_id = Auth::user()->id;
+        $bulk = Bulk::where('user_id', $user_id)->first();
+        if($bulk != null) $bulk_id = $bulk->id; else return "No 'com.samsung.health.exercise' File!";
+        Exercise::where('bulk_id', $bulk_id)->delete();
+
+        $bulk = Bulk::find($bulk_id);
+
+        if($bulk->type == "com.samsung.health.exercise")
         {
-            if($bulk->type == "com.samsung.health.exercise")
-            {
-                $this->resolveExercise($bulk);
-            }
+            $this->resolveExercise($bulk);
         }
+        
         Log::info("***** FileController ***** END resolving files *****\n");
         return redirect()->route('exercises');
     }
@@ -243,7 +258,7 @@ class FileController extends Controller
         $names_ids          = array_flip( array_intersect( $bulk_names, $data_from_keys ) );
         $data_from          = array_flip($data_from_keys);
         $data_to            = array_flip($data_to_keys);
-        $data_to['id']      = 0;
+        $data_to['id']      = Exercise::max('id') + 1;
         $data_to['bulk_id'] = $bulk->id;
         //TODO check that names not less
 
@@ -286,7 +301,7 @@ class FileController extends Controller
 
             reset($data_to_keys);
             reset($data_from_keys);
-            $data_to['id'] = $i - 1;
+            $data_to['id']++;
             $db_data[] = $data_to;
         }
 

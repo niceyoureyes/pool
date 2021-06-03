@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 use App\Exercise;
 use App\Table;
+use App\Bulk;
 
 use DateTime;
 use DateInterval;
+use Auth;
 
 class ExerciseController extends Controller
 {
@@ -94,7 +96,12 @@ class ExerciseController extends Controller
         {
             $filters   = [];
             $indexes   = [];
-            $exercises = Exercise::whereNotNull('id')->get();
+            $bulk      = Bulk::where('user_id', Auth::user()->id)->first();
+            if($bulk == null)
+                $bulk_id = -1;
+            else
+                $bulk_id = $bulk->id;
+            $exercises = Exercise::whereNotNull('id')->where('bulk_id', $bulk_id)->get();
             $exercises = $this->resolveExercise($this->data_from, $this->data_to, $this->formats, $exercises);
             $names     = $this->names;
             

@@ -10,5 +10,9 @@ class File extends Model
         'id', 'filename', 'stor_name', 'ext'
     ];
 
+    protected $hidden = [
+        'id', 'user_id'
+    ];
+
     public $timestamps = false;
 }

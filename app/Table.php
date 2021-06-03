@@ -4,8 +4,10 @@ namespace App;
 
 use Illuminate\Support\Facades\Log;
 
+use Auth;
 use DateTime;
 use DateInterval;
+use App\Bulk;
 
 class Table
 {
@@ -287,7 +289,8 @@ class Table
      */
     public static function filter($model, $filt)
     {
-        $x = $model::whereNotNull('id');
+        $bulk_id   = Bulk::where('user_id', Auth::user()->id)->first()->id;
+        $x = $model::whereNotNull('id')->where('bulk_id', $bulk_id);
 
         for($i = 0; $i < count($filt); $i++)
         {
