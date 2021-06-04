@@ -234,7 +234,7 @@ class FileController extends Controller
                     return null;
                 }
                 else{
-                    return $r['swolf'] / $d['distance'] * 100;
+                    return $r['swolf'] / $d['distance'] * 25;
                 }
             },
 

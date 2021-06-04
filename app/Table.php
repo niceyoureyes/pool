@@ -117,6 +117,10 @@ class Table
             {
                 $data = new DateInterval('PT'.floor(round($data) / 60).'M'.(round($data) % 60).'S');
             }
+            else if($type == 'float')
+            {
+                $data = number_format($data, $fm, '.', '');
+            }
         }
         // FROM DateInterval DateTime
         else if( gettype($data) == 'object' )

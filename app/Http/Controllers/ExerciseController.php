@@ -200,14 +200,18 @@ class ExerciseController extends Controller
 
     public function resolveAddl($data)
     {
-        $data_from  =  [ 'duration'    , 'interval', 'stroke_count'      , 'stroke_type' ] ;
-        $data_to    =  [ 'duration'    , 'interval', 'stroke_count'      , 'stroke_type' ] ;
-        $formats    =  [ ["i","%I:%S"] ,  null     ,  null               ,  null         ] ;
+        $data_from  =  [ 'duration'    , 'interval', 'stroke_count'      , 'stroke_type'                  ] ;
+        $data_to    =  [ 'duration'    , 'interval', 'stroke_count'      , 'stroke_type' , 'swolf'        ] ;
+        $formats    =  [ ["i","%I:%S"] ,  null     ,  null               ,  null         ,  ['float', 1]  ] ;
 
         $handlers = [
             'duration' => function($x){
                 $x = $x / 1000;
                 return new DateInterval('PT'.floor(round($x) / 60).'M'.(round($x) % 60).'S');
+            },
+
+            'swolf'    => function($x, $d){
+                return $d['duration'] / 1000 + $d['stroke_count'];
             }
         ];
 
