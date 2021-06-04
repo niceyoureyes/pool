@@ -107,6 +107,9 @@ class FileController extends Controller
         if($bulk->type == "com.samsung.health.exercise")
         {
             $this->resolveExercise($bulk);
+            // AUTO CLEAN FOR NON-INFORMATION ENTRIES
+            Exercise::where('bulk_id', $bulk_id)->where('distance', null)->delete();
+            Exercise::where('bulk_id', $bulk_id)->where('distance', 0)->delete();
         }
         
         Log::info("***** FileController ***** END resolving files *****\n");

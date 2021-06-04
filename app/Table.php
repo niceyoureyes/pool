@@ -116,6 +116,8 @@ class Table
             if($type == 'i')
             {
                 $data = new DateInterval('PT'.floor(round($data) / 60).'M'.(round($data) % 60).'S');
+                $data->h = floor($data->i / 60);
+                $data->i = floor($data->i % 60);
             }
             else if($type == 'float')
             {

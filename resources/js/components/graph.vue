@@ -16,8 +16,7 @@
     ],
     data () {
       return {
-        datacollection: null,
-        options: null
+        datacollection: null
       }
     },
     mounted () {
@@ -26,6 +25,7 @@
     },
     methods: {
       fillXY(){
+        this.input_xy.sort(function (a, b) { return a.x - b.x });
         for(let i = 0; i < this.input_xy.length; i++)
         {
           let x1 = this.input_xy[i].x;

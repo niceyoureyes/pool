@@ -20,7 +20,7 @@ class ExerciseController extends Controller
     private $data_to        =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                 , 'link_id' ] ;
     private $data_to_2      =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                             ] ;
     private $formats        =  [         ['dt','d-m-Y']                      , ['i','%I:%S']       , ['i','%I:%S']                       , ['i','%I:%S']                       , ['i','%I:%S']                          ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                      ,  null     ] ;
-    private $formats_graph  =  [         ['float',0]                         , ['float',0]         ,  null                               , null                                , null                                   ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                      ,  null     ] ;
+    private $formats_graph  =  [         ['dt','d-m-Y']                      , ['float',0]         ,  null                               , null                                , null                                   ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                      ,  null     ] ;
     private $filters        =  [  null , ['start_time', 'asc_desc', null]    ,  null               , ['duration', 'asc_desc', null]      , ['max_tempo', 'asc_desc', null]     , ['mean_tempo', 'asc_desc', null]       , ['stroke_count', 'asc_desc', null]           , ['swolf', 'asc_desc', null]          ,  null        ,  null        , ['distance', 'vals', null] ,  null     ] ;
     private $names          =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'                , 'Подробно'] ;
     private $names_2        =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'                            ] ;
@@ -31,6 +31,7 @@ class ExerciseController extends Controller
         /* Redirect to Graph */
         if( $request->has('newfilter') && $request->has('xy') && $request->has('filters') && $request->input('newfilter') == 0 )
         {
+            $type = 1;
             $xy = json_decode($request->input('xy'));
             $filters = json_decode($request->input('filters'), true);
             $exercises = Table::filter(new Exercise, $filters);
@@ -40,17 +41,22 @@ class ExerciseController extends Controller
 
             $label_x = $names[$xy[0] - 1];
             $label_y = $names[$xy[1] - 1];
+            if($label_x == "Дата") $type = 2;
 
             $exercises = json_decode($exercises, true); // enc + dec!!!
             $input_data = [];
             for($i = 0; $i < count($exercises); $i++)
             {
-                $x = $exercises[$i][ $this->data_to[$xy[0] - 2]] * 1;
+                $x = $exercises[$i][ $this->data_to[$xy[0] - 2]];
                 $y = $exercises[$i][ $this->data_to[$xy[1] - 2]] * 1;
+                if($type == 1)
+                {
+                    $x = $x * 1;
+                }
                 $input_data[] = ['x' => $x, 'y' => $y];
             }
 
-            return redirect()->route('graph', ['label_x' => $label_x, 'label_y' => $label_y, 'input_data' => $input_data]);
+            return redirect()->route('graph', ['label_x' => $label_x, 'label_y' => $label_y, 'input_data' => $input_data, 'type' => $type]);
         }
 
         /* Creating filter. Redirect to youself */

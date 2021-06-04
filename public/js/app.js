@@ -1863,6 +1863,56 @@ module.exports = function isBuffer (obj) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/articles.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/articles.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['message', 'mean_swolf', 'last_date', 'all_duration', 'best_mean_tempo_50', 'best_mean_tempo_100', 'best_mean_tempo_200', 'best_mean_tempo_1000'],
+  data: function data() {
+    return {};
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/graph.vue?vue&type=script&lang=js&":
 /*!****************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/graph.vue?vue&type=script&lang=js& ***!
@@ -1887,8 +1937,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['input_xy'],
   data: function data() {
     return {
-      datacollection: null,
-      options: null
+      datacollection: null
     };
   },
   mounted: function mounted() {
@@ -1897,6 +1946,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     fillXY: function fillXY() {
+      this.input_xy.sort(function (a, b) {
+        return a.x - b.x;
+      });
+
       for (var i = 0; i < this.input_xy.length; i++) {
         var x1 = this.input_xy[i].x;
         var y1 = this.input_xy[i].y;
@@ -1938,33 +1991,42 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     LineChart: _LineChart_js__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
+  props: ['input_xy'],
   data: function data() {
     return {
-      datacollection: null
+      datacollection: null,
+      options: null
     };
   },
   mounted: function mounted() {
     this.fillData();
+    this.fillXY();
   },
   methods: {
+    fillXY: function fillXY() {
+      //this.input_xy.sort(function (a, b) { return a.x - b.x });
+      for (var i = 0; i < this.input_xy.length; i++) {
+        var x1 = this.input_xy[i].x;
+        var y1 = this.input_xy[i].y;
+        this.datacollection.datasets[0].data.push(y1);
+        this.datacollection.labels.push(x1);
+      }
+    },
     fillData: function fillData() {
       this.datacollection = {
-        labels: [100, 200, 300, 500, 1000],
+        labels: [],
         datasets: [{
-          label: 'Data One',
-          backgroundColor: '#f87979',
-          data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()]
+          label: 'График',
+          borderColor: 'rgba(208, 152, 60, 0.8)',
+          backgroundColor: ['rgba(47, 152, 208, 0.2)'],
+          data: []
         }]
       };
-    },
-    getRandomInt: function getRandomInt() {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5;
     }
   }
 });
@@ -76627,23 +76689,63 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", [
+    _c("h1", [_vm._v("Это главная страница Pool 1.0")]),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("h2", [
+      _vm._v(
+        "Этот сайт поможет вам отслеживать ваши тренировки по плаванию в лучшей форме"
+      )
+    ]),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("h2", [_c("b", [_vm._v(_vm._s(_vm.message))])]),
+    _vm._v(" "),
+    _c("div", { staticClass: "container-fluid" }, [
+      _c("div", { staticClass: "row" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-4" }, [
+          _c("h2", [_vm._v(_vm._s(_vm.mean_swolf))]),
+          _vm._v(" "),
+          _c("h2", [_vm._v(_vm._s(_vm.best_mean_tempo_50))]),
+          _vm._v(" "),
+          _c("h2", [_vm._v(_vm._s(_vm.best_mean_tempo_100))]),
+          _vm._v(" "),
+          _c("h2", [_vm._v(_vm._s(_vm.best_mean_tempo_200))]),
+          _vm._v(" "),
+          _c("h2", [_vm._v(_vm._s(_vm.best_mean_tempo_1000))]),
+          _vm._v(" "),
+          _c("h2", [_vm._v(_vm._s(_vm.last_date))]),
+          _vm._v(" "),
+          _c("h2", [_vm._v(_vm._s(_vm.all_duration))])
+        ])
+      ])
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("h1", [_vm._v("Это главная страница Pool 1.0")]),
+    return _c("div", { staticClass: "col-4" }, [
+      _c("h2", [_vm._v("Средний показатель Swolf (на 25 м):")]),
       _vm._v(" "),
-      _c("br"),
+      _c("h2", [_vm._v("Лучший средний темп (50 м):")]),
       _vm._v(" "),
-      _c("h2", [
-        _vm._v(
-          "Этот сайт поможет вам отслеживать ваши тренировки по плаванию в лучшей форме"
-        )
-      ])
+      _c("h2", [_vm._v("Лучший средний темп (100 м):")]),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Лучший средний темп (200 м):")]),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Лучший средний темп (1000 м):")]),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Дата последнего заплыва:")]),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Суммарное время в бассейне:")])
     ])
   }
 ]
@@ -76705,22 +76807,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "small" },
-    [
-      _c("line-chart", { attrs: { "chart-data": _vm.datacollection } }),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          on: {
-            click: function($event) {
-              return _vm.fillData()
-            }
-          }
-        },
-        [_vm._v("Randomize")]
-      )
-    ],
+    [_c("line-chart", { attrs: { "chart-data": _vm.datacollection } })],
     1
   )
 }
@@ -89372,15 +89459,17 @@ var reactiveProp = vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["mixins"].reactivePr
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _articles_vue_vue_type_template_id_0c21a5f0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./articles.vue?vue&type=template&id=0c21a5f0& */ "./resources/js/components/articles.vue?vue&type=template&id=0c21a5f0&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _articles_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./articles.vue?vue&type=script&lang=js& */ "./resources/js/components/articles.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
-var script = {}
+
+
 
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  script,
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _articles_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _articles_vue_vue_type_template_id_0c21a5f0___WEBPACK_IMPORTED_MODULE_0__["render"],
   _articles_vue_vue_type_template_id_0c21a5f0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -89394,6 +89483,20 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 if (false) { var api; }
 component.options.__file = "resources/js/components/articles.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/articles.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/articles.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_articles_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./articles.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/articles.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_articles_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 

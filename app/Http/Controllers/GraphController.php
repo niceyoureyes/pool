@@ -14,6 +14,7 @@ class GraphController extends Controller
         $input_data = json_encode($this->input_data);
         $label_x = "X label";
         $label_y = "Y label";
+        $type = 1;
 
         if( $request->has('label_x') )
             $label_x = $request->input('label_x');
@@ -23,7 +24,10 @@ class GraphController extends Controller
 
         if( $request->has('input_data') )
             $input_data = json_encode($request->input('input_data'));
+
+        if( $request->has('type') )
+            $type = $request->input('type');
         
-        return view('graph', compact('input_data', 'label_x', 'label_y') );
+        return view('graph', compact('input_data', 'label_x', 'label_y', 'type') );
     }
 }

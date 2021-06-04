@@ -1,7 +1,6 @@
 <template>
-  <div class="small">
+  <div>
     <line-chart :chart-data="datacollection"></line-chart>
-    <button @click="fillData()">Randomize</button>
   </div>
 </template>
 
@@ -12,29 +11,42 @@
     components: {
       LineChart
     },
+    props: [
+      'input_xy'
+    ],
     data () {
       return {
-        datacollection: null
+        datacollection: null,
+        options: null
       }
     },
     mounted () {
-      this.fillData()
+      this.fillData();
+      this.fillXY();
     },
     methods: {
-      fillData () {
+      fillXY(){
+        //this.input_xy.sort(function (a, b) { return a.x - b.x });
+        for(let i = 0; i < this.input_xy.length; i++)
+        {
+          let x1 = this.input_xy[i].x;
+          let y1 = this.input_xy[i].y;
+          this.datacollection.datasets[0].data.push(y1);
+          this.datacollection.labels.push(x1);
+        }
+      },
+      fillData(){
         this.datacollection = {
-          labels: [100, 200, 300, 500, 1000],
+          labels: [],
           datasets: [
             {
-              label: 'Data One',
-              backgroundColor: '#f87979',
-              data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()]
+              label: 'График',
+              borderColor: 'rgba(208, 152, 60, 0.8)',
+              backgroundColor: ['rgba(47, 152, 208, 0.2)',],
+              data: []
             }
           ]
         }
-      },
-      getRandomInt () {
-        return Math.floor(Math.random() * (50 - 5 + 1)) + 5
       }
     }
   }
