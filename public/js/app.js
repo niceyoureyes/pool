@@ -1900,10 +1900,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['message', 'mean_swolf', 'last_date', 'all_duration', 'best_mean_tempo_50', 'best_mean_tempo_100', 'best_mean_tempo_200', 'best_mean_tempo_1000'],
   data: function data() {
@@ -76690,38 +76686,26 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("h1", [_vm._v("Это главная страница Pool 1.0")]),
-    _vm._v(" "),
-    _c("br"),
-    _vm._v(" "),
-    _c("h2", [
-      _vm._v(
-        "Этот сайт поможет вам отслеживать ваши тренировки по плаванию в лучшей форме"
-      )
-    ]),
-    _vm._v(" "),
-    _c("br"),
-    _vm._v(" "),
-    _c("h2", [_c("b", [_vm._v(_vm._s(_vm.message))])]),
-    _vm._v(" "),
     _c("div", { staticClass: "container-fluid" }, [
+      _c("h2", [_c("b", [_vm._v(_vm._s(_vm.message))])]),
+      _vm._v(" "),
       _c("div", { staticClass: "row" }, [
         _vm._m(0),
         _vm._v(" "),
-        _c("div", { staticClass: "col-4" }, [
-          _c("h2", [_vm._v(_vm._s(_vm.mean_swolf))]),
+        _c("div", { staticClass: "col-6" }, [
+          _c("h4", [_vm._v(_vm._s(_vm.mean_swolf))]),
           _vm._v(" "),
-          _c("h2", [_vm._v(_vm._s(_vm.best_mean_tempo_50))]),
+          _c("h4", [_vm._v(_vm._s(_vm.best_mean_tempo_50))]),
           _vm._v(" "),
-          _c("h2", [_vm._v(_vm._s(_vm.best_mean_tempo_100))]),
+          _c("h4", [_vm._v(_vm._s(_vm.best_mean_tempo_100))]),
           _vm._v(" "),
-          _c("h2", [_vm._v(_vm._s(_vm.best_mean_tempo_200))]),
+          _c("h4", [_vm._v(_vm._s(_vm.best_mean_tempo_200))]),
           _vm._v(" "),
-          _c("h2", [_vm._v(_vm._s(_vm.best_mean_tempo_1000))]),
+          _c("h4", [_vm._v(_vm._s(_vm.best_mean_tempo_1000))]),
           _vm._v(" "),
-          _c("h2", [_vm._v(_vm._s(_vm.last_date))]),
+          _c("h4", [_vm._v(_vm._s(_vm.last_date))]),
           _vm._v(" "),
-          _c("h2", [_vm._v(_vm._s(_vm.all_duration))])
+          _c("h4", [_vm._v(_vm._s(_vm.all_duration))])
         ])
       ])
     ])
@@ -76732,20 +76716,20 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-4" }, [
-      _c("h2", [_vm._v("Средний показатель Swolf (на 25 м):")]),
+    return _c("div", { staticClass: "col-6" }, [
+      _c("h4", [_vm._v("Средний показатель Swolf (25 м):")]),
       _vm._v(" "),
-      _c("h2", [_vm._v("Лучший средний темп (50 м):")]),
+      _c("h4", [_vm._v("Лучший средний темп (50 м):")]),
       _vm._v(" "),
-      _c("h2", [_vm._v("Лучший средний темп (100 м):")]),
+      _c("h4", [_vm._v("Лучший средний темп (100 м):")]),
       _vm._v(" "),
-      _c("h2", [_vm._v("Лучший средний темп (200 м):")]),
+      _c("h4", [_vm._v("Лучший средний темп (200 м):")]),
       _vm._v(" "),
-      _c("h2", [_vm._v("Лучший средний темп (1000 м):")]),
+      _c("h4", [_vm._v("Лучший средний темп (1000 м):")]),
       _vm._v(" "),
-      _c("h2", [_vm._v("Дата последнего заплыва:")]),
+      _c("h4", [_vm._v("Дата последнего заплыва:")]),
       _vm._v(" "),
-      _c("h2", [_vm._v("Суммарное время в бассейне:")])
+      _c("h4", [_vm._v("Суммарное время в бассейне:")])
     ])
   }
 ]
