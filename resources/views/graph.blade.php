@@ -12,6 +12,7 @@
             <div class="col-4">
                 @if ($type == 1)
                 <graph :input_xy="{{$input_data}}"
+                       :second_line="false"
                        >
                 </graph>
                 @else

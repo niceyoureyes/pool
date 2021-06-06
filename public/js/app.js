@@ -1992,7 +1992,7 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     LineChart: _LineChart_js__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  props: ['input_xy'],
+  props: ['input_xy', 'second_line'],
   data: function data() {
     return {
       datacollection: null,
@@ -2010,6 +2010,8 @@ __webpack_require__.r(__webpack_exports__);
         var x1 = this.input_xy[i].x;
         var y1 = this.input_xy[i].y;
         this.datacollection.datasets[0].data.push(y1);
+        if (this.second_line) this.datacollection.datasets[1].data.push(y1 - 5 - Math.floor(Math.random() * 5)); //!!!!!!!
+
         this.datacollection.labels.push(x1);
       }
     },
@@ -2020,6 +2022,11 @@ __webpack_require__.r(__webpack_exports__);
           label: 'График',
           borderColor: 'rgba(208, 152, 60, 0.8)',
           backgroundColor: ['rgba(47, 152, 208, 0.2)'],
+          data: []
+        }, {
+          label: 'График2',
+          borderColor: 'rgba(0, 152, 60, 0.8)',
+          backgroundColor: ['rgba(0, 0, 0, 0)'],
           data: []
         }]
       };

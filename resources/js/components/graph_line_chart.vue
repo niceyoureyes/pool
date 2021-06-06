@@ -12,7 +12,7 @@
       LineChart
     },
     props: [
-      'input_xy'
+      'input_xy', 'second_line'
     ],
     data () {
       return {
@@ -32,6 +32,7 @@
           let x1 = this.input_xy[i].x;
           let y1 = this.input_xy[i].y;
           this.datacollection.datasets[0].data.push(y1);
+          if(this.second_line) this.datacollection.datasets[1].data.push(y1 - 5 - Math.floor(Math.random() * 5)); //!!!!!!!
           this.datacollection.labels.push(x1);
         }
       },
@@ -43,6 +44,12 @@
               label: 'График',
               borderColor: 'rgba(208, 152, 60, 0.8)',
               backgroundColor: ['rgba(47, 152, 208, 0.2)',],
+              data: []
+            },
+            {
+              label: 'График2',
+              borderColor: 'rgba(0, 152, 60, 0.8)',
+              backgroundColor: ['rgba(0, 0, 0, 0)',],
               data: []
             }
           ]

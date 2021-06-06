@@ -36,6 +36,7 @@
                         </div>
                         <div class="col-11">
                         <graph_line_chart :input_xy="{{$input_data}}"
+                                          :second_line="true"
                                         >
                         </graph_line_chart>
                         </div>
