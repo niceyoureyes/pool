@@ -58,10 +58,10 @@ class HomeController extends Controller
             $mean_swolf = Exercise::where('bulk_id', $bulk_id)->whereNotNull('swolf')->avg('swolf');
             $last_date  = Exercise::where('bulk_id', $bulk_id)->max('start_time');
             $all_duration = Exercise::where('bulk_id', $bulk_id)->sum('duration');
-            $best_mean_tempo_50   = Exercise::where('bulk_id', $bulk_id)->where('distance', 50)->max('mean_tempo');
-            $best_mean_tempo_100  = Exercise::where('bulk_id', $bulk_id)->where('distance', 100)->max('mean_tempo');
-            $best_mean_tempo_200  = Exercise::where('bulk_id', $bulk_id)->where('distance', 200)->max('mean_tempo');
-            $best_mean_tempo_1000 = Exercise::where('bulk_id', $bulk_id)->where('distance', 1000)->max('mean_tempo');
+            $best_mean_tempo_50   = Exercise::where('bulk_id', $bulk_id)->where('distance', 50)->min('mean_tempo');
+            $best_mean_tempo_100  = Exercise::where('bulk_id', $bulk_id)->where('distance', 100)->min('mean_tempo');
+            $best_mean_tempo_200  = Exercise::where('bulk_id', $bulk_id)->where('distance', 200)->min('mean_tempo');
+            $best_mean_tempo_1000 = Exercise::where('bulk_id', $bulk_id)->where('distance', 1000)->min('mean_tempo');
 
             $mean_swolf = Table::fmt($mean_swolf, 'float', 1);
             $last_date = Table::fmt($last_date, 'dt', 'd-m-Y');
