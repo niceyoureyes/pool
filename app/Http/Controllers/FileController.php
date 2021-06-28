@@ -244,6 +244,33 @@ class FileController extends Controller
             'stroke_count'=> function(&$x, &$d, &$y){
                 $r = Exercise::get_from_addldata($y['addl_data']);
                 return $r['stroke_count'];
+            },
+
+            //TODO: remove SIMULATION!
+            'comment' => function(&$x, &$d, &$y){
+                if( $d['distance'] == 300 )
+                {
+                    $r = rand(0, 10);
+                    if($r == 0)
+                        return "Колобашка 50";
+                    if($r == 1)
+                        return "по 100м";
+                    if($r == 2)
+                        return "по 150м";
+                    if($r == 3)
+                        return "ноги 100";
+                    if($r == 4)
+                        return "руки 100";
+                }
+                return $x;
+            },
+
+            'length_type' => function(&$x, &$d, &$y){
+                $r = preg_replace("/[^0-9]/", "", $y['comment']);
+                if($r == "" || $r == null)
+                    return 0;
+                else
+                    return (int)$r;
             }
         ];
 

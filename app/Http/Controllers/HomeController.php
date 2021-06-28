@@ -107,13 +107,24 @@ class HomeController extends Controller
             }
 
             // Moving Average method (range = 4)
-            if(true && count($input_data) > 6)
+            $range = 10;
+            $sum_y = 0;
+
+            if(true && count($input_data) > $range + 2)
             {
-                for($i = 3; $i < count($input_data); $i++)
+                for($i = 0; $i < $range; $i++)
                 {
-                    $g[] = ['x' => $input_data[$i - 2]['x'], 'y' => 
-                        ($input_data[$i - 3]['y'] + $input_data[$i - 2]['y'] + $input_data[$i - 1]['y'] + $input_data[$i]['y']) / 4];
+                    $sum_y += $input_data[$i]['y'];
                 }
+
+                $g[] = ['x' => $input_data[0]['x'], 'y' => $sum_y / $range];
+
+                for($i = $range; $i < count($input_data); $i++)
+                {
+                    $sum_y = $sum_y - $input_data[$i - $range]['y'] + $input_data[$i]['y'];
+                    $g[] = ['x' => $input_data[$i - $range + 1]['x'], 'y' => $sum_y / $range];
+                }
+
                 $input_data = json_encode($g);
             }
             else

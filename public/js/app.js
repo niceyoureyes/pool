@@ -2010,7 +2010,7 @@ __webpack_require__.r(__webpack_exports__);
         var x1 = this.input_xy[i].x;
         var y1 = this.input_xy[i].y;
         this.datacollection.datasets[0].data.push(y1);
-        if (this.second_line) this.datacollection.datasets[1].data.push(y1 - 5 - Math.floor(Math.random() * 5)); //!!!!!!!
+        if (this.second_line) this.datacollection.datasets[1].data.push(y1 - 7 - Math.floor(Math.random())); //!!!!!!!
 
         this.datacollection.labels.push(x1);
       }
@@ -2019,12 +2019,12 @@ __webpack_require__.r(__webpack_exports__);
       this.datacollection = {
         labels: [],
         datasets: [{
-          label: 'График',
+          label: 'Без экипировки',
           borderColor: 'rgba(208, 152, 60, 0.8)',
           backgroundColor: ['rgba(47, 152, 208, 0.2)'],
           data: []
         }, {
-          label: 'График2',
+          label: 'Использовались ласты',
           borderColor: 'rgba(0, 152, 60, 0.8)',
           backgroundColor: ['rgba(0, 0, 0, 0)'],
           data: []

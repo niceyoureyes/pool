@@ -16,14 +16,14 @@ use Auth;
 
 class ExerciseController extends Controller
 {
-    private $data_from      =  [ 'id'  , 'start_time'                        , 'end_time'          , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                             ] ;
-    private $data_to        =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                 , 'link_id' ] ;
-    private $data_to_2      =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type', 'distance'                             ] ;
-    private $formats        =  [         ['dt','d-m-Y']                      , ['i','%I:%S']       , ['i','%I:%S']                       , ['i','%I:%S']                       , ['i','%I:%S']                          ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                      ,  null     ] ;
-    private $formats_graph  =  [         ['dt','d-m-Y']                      , ['float',0]         ,  null                               , null                                , null                                   ,  null                                        , ['float',1]                          ,  null        ,  null        ,  null                      ,  null     ] ;
-    private $filters        =  [  null , ['start_time', 'asc_desc', null]    ,  null               , ['duration', 'asc_desc', null]      , ['max_tempo', 'asc_desc', null]     , ['mean_tempo', 'asc_desc', null]       , ['stroke_count', 'asc_desc', null]           , ['swolf', 'asc_desc', null]          ,  null        ,  null        , ['distance', 'vals', null] ,  null     ] ;
-    private $names          =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'                , 'Подробно'] ;
-    private $names_2        =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва', 'Дистанция'                            ] ;
+    private $data_from      =  [ 'id'  , 'start_time'                        , 'end_time'          , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type'                       , 'distance'                             ] ;
+    private $data_to        =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type'                       , 'distance'                 , 'link_id' ] ;
+    private $data_to_2      =  [         'start_time'                        , 'total_time'        , 'duration'                          , 'max_tempo'                         , 'mean_tempo'                           , 'stroke_count'                               , 'swolf'                              , 'comment'    , 'length_type'                       , 'distance'                             ] ;
+    private $formats        =  [         ['dt','d-m-Y']                      , ['i','%I:%S']       , ['i','%I:%S']                       , ['i','%I:%S']                       , ['i','%I:%S']                          ,  null                                        , ['float',1]                          ,  null        ,  null                               ,  null                      ,  null     ] ;
+    private $formats_graph  =  [         ['dt','d-m-Y']                      , ['float',0]         ,  null                               , null                                , null                                   ,  null                                        , ['float',1]                          ,  null        ,  null                               ,  null                      ,  null     ] ;
+    private $filters        =  [  null , ['start_time', 'asc_desc', null]    ,  null               , ['duration', 'asc_desc', null]      , ['max_tempo', 'asc_desc', null]     , ['mean_tempo', 'asc_desc', null]       , ['stroke_count', 'asc_desc', null]           , ['swolf', 'asc_desc', null]          ,  null        ,  ['length_type', 'asc_desc', null]  , ['distance', 'vals', null] ,  null     ] ;
+    private $names          =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва'                       , 'Дистанция'                , 'Подробно'] ;
+    private $names_2        =  [ '#'   , 'Дата'                              , 'Общая длительность', 'Длительность'                      , 'Максимальный темп'                 , 'Средний темп'                         , 'Количество гребков'                         , 'Swolf'                              , 'Комментарий', 'Тип заплыва'                       , 'Дистанция'                            ] ;
 
     // ***** Handlers *****
     public function get(Request $request)
@@ -208,6 +208,13 @@ class ExerciseController extends Controller
                 {
                     return $x;
                 }
+            },
+            'length_type' => function($x, $d)
+            {
+                if($x != 0)
+                    return ($d['distance'] / $x)." по ".($x);
+                else
+                    return "";
             }
         ];
 
