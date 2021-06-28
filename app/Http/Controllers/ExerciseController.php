@@ -197,6 +197,17 @@ class ExerciseController extends Controller
             'link_id'    => function($x, $d)
             {
                 return '<a href="'.route('get_exercise_by_id', ['id' => $d['id']] ).'">Подробно</a>';
+            },
+            'comment'    => function($x, $d)
+            {
+                if(mb_strlen($x) > 23)
+                {
+                    return mb_substr($x, 0, 20)."...";
+                }
+                else
+                {
+                    return $x;
+                }
             }
         ];
 
